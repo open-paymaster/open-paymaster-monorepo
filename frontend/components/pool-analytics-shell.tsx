@@ -1,14 +1,9 @@
 'use client';
 
-import {
-  useDeferredValue,
-  useMemo,
-  useState,
-  useTransition,
-} from 'react';
+import { useDeferredValue, useMemo, useState, useTransition } from 'react';
 import { PoolTable } from '@/components/pool-table';
 import { LiquidGlassButton } from '@/components/ui/liquid-glass-button';
-import { SlideOver } from '@/components/ui/slide-over';
+import SlideOver from '@/components/ui/slide-over';
 import { defaultPoolData, type PoolRow } from '@/data/pools';
 
 type PoolAction = {
@@ -77,7 +72,8 @@ export function PoolAnalyticsShell({
         isOpen={isPanelOpen}
         onClose={closePanel}
         ariaLabel="Pool action panel"
-        panelClassName="flex flex-col gap-6">
+        panelClassName="flex flex-col gap-6"
+      >
         <div className="flex items-start justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.5em] text-slate-500">
@@ -90,7 +86,8 @@ export function PoolAnalyticsShell({
           <button
             type="button"
             onClick={closePanel}
-            className="rounded-full border border-slate-200/80 px-3 py-1 text-xs font-semibold text-slate-500">
+            className="rounded-full border border-slate-200/80 px-3 py-1 text-xs font-semibold text-slate-500"
+          >
             Close
           </button>
         </div>
@@ -157,7 +154,11 @@ export function PoolAnalyticsShell({
               {actions.map((action) => (
                 <div key={action.label} className="space-y-1">
                   <form action={action.action} className="flex w-full">
-                    <input type="hidden" name="poolId" value={selectedPool.id} />
+                    <input
+                      type="hidden"
+                      name="poolId"
+                      value={selectedPool.id}
+                    />
                     <input
                       type="hidden"
                       name="poolName"

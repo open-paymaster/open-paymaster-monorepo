@@ -14,7 +14,7 @@ type SlideOverProps = {
   onClose?: () => void;
 };
 
-export function SlideOver({
+const SlideOver: React.FC<SlideOverProps> = ({
   children,
   ariaLabel,
   titleText,
@@ -22,7 +22,7 @@ export function SlideOver({
   panelClassName = '',
   isOpen,
   onClose,
-}: SlideOverProps) {
+}) => {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -91,14 +91,14 @@ export function SlideOver({
       >
         <div
           className={clsx(
-            'mb-4 flex items-start',
+            'mb-4 flex items-center',
             headerHasContent ? 'justify-between' : 'justify-end'
           )}
         >
           {headerHasContent && (
             <div>
               {eyebrowText && (
-                <p className="text-xs font-semibold uppercase tracking-[0.5em] text-slate-500">
+                <p className="text-xs font-semibold uppercase tracking-[0.4em] text-slate-500">
                   {eyebrowText}
                 </p>
               )}
@@ -109,10 +109,11 @@ export function SlideOver({
               )}
             </div>
           )}
+
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full border border-slate-200/80 px-3 py-1 text-xs font-semibold text-slate-500"
+            className="cursor-pointer rounded-full border border-slate-200/80 px-3 py-1 text-xs font-semibold text-slate-500"
           >
             Close
           </button>
@@ -123,4 +124,6 @@ export function SlideOver({
     </>,
     portalNode
   );
-}
+};
+
+export default SlideOver;

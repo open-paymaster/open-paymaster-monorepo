@@ -1,18 +1,19 @@
 'use client';
 
-import {
-  useCallback,
-  useEffect,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
 import { useRouter } from 'next/navigation';
-import { AuthPanel } from '@/components/auth-panel';
-import { TransferPanel } from '@/components/transfer-panel';
-import { SlideOver } from '@/components/ui/slide-over';
-import { env } from '@/config/env';
+import {
+  useId,
+  useRef,
+  useMemo,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react';
+
+import AuthPanel from '@/components/auth-panel';
+import SlideOver from '@/components/ui/slide-over';
+import TransferPanel from '@/components/transfer-panel';
+
 import { MiniOrb } from './mini-orb';
 import type { MiniOrbOption } from './mini-orb';
 
@@ -46,7 +47,8 @@ const buildDefaultOptions = ({
         stroke="currentColor"
         strokeWidth="1.6"
         strokeLinecap="round"
-        strokeLinejoin="round">
+        strokeLinejoin="round"
+      >
         <path d="M5 12h14" />
         <path d="M12 5l5 5" />
         <path d="M12 19l-5-5" />
@@ -67,7 +69,8 @@ const buildDefaultOptions = ({
         stroke="currentColor"
         strokeWidth="1.6"
         strokeLinecap="round"
-        strokeLinejoin="round">
+        strokeLinejoin="round"
+      >
         <ellipse cx="12" cy="7" rx="6" ry="3" />
         <path d="M6 7v5c0 1.7 2.7 3 6 3s6-1.3 6-3V7" />
         <path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5" />
@@ -88,7 +91,8 @@ const buildDefaultOptions = ({
         stroke="currentColor"
         strokeWidth="1.4"
         strokeLinecap="round"
-        strokeLinejoin="round">
+        strokeLinejoin="round"
+      >
         <rect x="3" y="5" width="4" height="14" rx="1.4" />
         <rect x="17" y="5" width="4" height="14" rx="1.4" />
         <path d="M7 7h10v10H7z" />
@@ -104,11 +108,13 @@ const buildDefaultOptions = ({
 
 export function ControlOrb({ options }: ControlOrbProps) {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const [isTransferPanelOpen, setIsTransferPanelOpen] = useState(false);
   const [isUserPanelOpen, setIsUserPanelOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const panelId = useId();
+  const [isTransferPanelOpen, setIsTransferPanelOpen] = useState(false);
+
   const router = useRouter();
+  const panelId = useId();
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const openUserPanel = useCallback(() => {
     if (typeof window === 'undefined') {
       setIsUserPanelOpen(true);
@@ -116,6 +122,7 @@ export function ControlOrb({ options }: ControlOrbProps) {
     }
     window.requestAnimationFrame(() => setIsUserPanelOpen(true));
   }, []);
+
   const openTransferPanel = useCallback(() => {
     if (typeof window === 'undefined') {
       setIsTransferPanelOpen(true);
@@ -123,6 +130,7 @@ export function ControlOrb({ options }: ControlOrbProps) {
     }
     window.requestAnimationFrame(() => setIsTransferPanelOpen(true));
   }, []);
+
   const defaultOptions = useMemo(
     () =>
       buildDefaultOptions({
@@ -132,6 +140,7 @@ export function ControlOrb({ options }: ControlOrbProps) {
       }),
     [router, openUserPanel, openTransferPanel]
   );
+
   const resolvedOptions = options ?? defaultOptions;
   const panelMaxHeight = `${Math.max(resolvedOptions.length, 1) * 84}px`;
 
@@ -165,7 +174,8 @@ export function ControlOrb({ options }: ControlOrbProps) {
     <>
       <div
         ref={containerRef}
-        className="fixed bottom-6 right-6 z-30 flex flex-col items-center gap-5 sm:gap-6">
+        className="fixed bottom-6 right-6 z-30 flex flex-col items-center gap-5 sm:gap-6"
+      >
         <div
           id={panelId}
           role="menu"
@@ -176,7 +186,8 @@ export function ControlOrb({ options }: ControlOrbProps) {
             maxHeight: isPanelOpen ? panelMaxHeight : 0,
             opacity: isPanelOpen ? 1 : 0,
             transform: isPanelOpen ? 'translateY(0)' : 'translateY(0.75rem)',
-          }}>
+          }}
+        >
           {resolvedOptions.map((option, index) => (
             <MiniOrb
               key={option.id}
@@ -198,7 +209,8 @@ export function ControlOrb({ options }: ControlOrbProps) {
           aria-expanded={isPanelOpen}
           aria-controls={panelId}
           onClick={() => setIsPanelOpen((prev) => !prev)}
-          className="group flex h-16 w-16 cursor-pointer items-center justify-center rounded-full bg-transparent outline-none transition-transform duration-300 hover:scale-105 focus-visible:ring-2 focus-visible:ring-indigo-300 focus-visible:ring-offset-2 sm:h-20 sm:w-20">
+          className="group flex h-16 w-16 cursor-pointer items-center justify-center rounded-full bg-transparent outline-none transition-transform duration-300 hover:scale-105 focus-visible:ring-2 focus-visible:ring-indigo-300 focus-visible:ring-offset-2 sm:h-20 sm:w-20"
+        >
           <span className="sr-only">Toggle control shortcuts</span>
 
           <div className="relative flex h-full w-full items-center justify-center">
@@ -275,7 +287,8 @@ export function ControlOrb({ options }: ControlOrbProps) {
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    aria-hidden="true">
+                    aria-hidden="true"
+                  >
                     <path d="M5 12h14" />
                     <path d="M12 6h7" />
                     <path d="M5 18h7" />
@@ -293,30 +306,18 @@ export function ControlOrb({ options }: ControlOrbProps) {
       <SlideOver
         isOpen={isTransferPanelOpen}
         onClose={() => setIsTransferPanelOpen(false)}
+        eyebrowText="Transfer"
         ariaLabel="Send transfer panel"
-        panelClassName="flex w-full flex-col gap-6 sm:max-w-lg">
-        <TransferPanel onClose={() => setIsTransferPanelOpen(false)} />
+      >
+        <TransferPanel />
       </SlideOver>
 
       <SlideOver
         isOpen={isUserPanelOpen}
         onClose={() => setIsUserPanelOpen(false)}
         ariaLabel="Account control panel"
-        panelClassName="flex flex-col gap-6">
-        <div className="flex items-center justify-between">
-          <p className="text-xs font-semibold uppercase tracking-[0.4em] text-slate-500">
-            Account
-          </p>
-
-          <button
-            type="button"
-            onClick={() => setIsUserPanelOpen(false)}
-            className="cursor-pointer rounded-full border border-slate-200/80 px-3 py-1 text-xs font-semibold text-slate-500">
-            Close
-          </button>
-        </div>
-
-        <AuthPanel enabled={Boolean(env.privyAppId)} />
+      >
+        <AuthPanel />
       </SlideOver>
     </>
   );

@@ -1,39 +1,17 @@
-"use client";
+'use client';
 
-import { usePrivy } from "@privy-io/react-auth";
-import { useCallback } from "react";
-import { LiquidGlassButton } from "@/components/ui/liquid-glass-button";
+import { usePrivy } from '@privy-io/react-auth';
+import { useCallback } from 'react';
 
-type AuthPanelProps = {
-  enabled: boolean;
-};
+import { LiquidGlassButton } from '@/components/ui/liquid-glass-button';
 
-export function AuthPanel({ enabled }: AuthPanelProps) {
-  if (!enabled) {
-    return (
-      <div className="rounded-[1.25rem] border border-dashed border-slate-200 bg-white/70 p-5 text-sm text-slate-600">
-        <p className="font-semibold text-slate-800">Privy disabled</p>
-        <p className="mt-2 text-xs">
-          Set{" "}
-          <code className="font-mono text-[11px]">
-            NEXT_PUBLIC_PRIVY_APP_ID
-          </code>{" "}
-          to enable authentication locally.
-        </p>
-      </div>
-    );
-  }
-
-  return <PrivyBackedAuthPanel />;
-}
-
-function PrivyBackedAuthPanel() {
+const AuthPanel = () => {
   const { ready, authenticated, login, logout } = usePrivy();
 
   const handleWalletLogin = useCallback(async () => {
     login({
-      loginMethods: ["wallet"],
-      walletChainType: "ethereum-only",
+      loginMethods: ['wallet'],
+      walletChainType: 'ethereum-only',
     });
   }, [login]);
 
@@ -66,4 +44,6 @@ function PrivyBackedAuthPanel() {
       </div>
     </div>
   );
-}
+};
+
+export default AuthPanel;
