@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.26;
+
+pragma solidity ^0.8.28;
 
 // External
 import {
@@ -15,6 +16,8 @@ import {BasePaymaster} from "./BasePaymaster.sol";
 import {EntryPointVault} from "./EntryPointVault.sol";
 import {IOracle} from "../interfaces/IOracle.sol";
 
+/// @title UniversalPaymaster
+/// @notice A trustless paymaster that allows users to pay for gas with any token.
 contract UniversalPaymaster is BasePaymaster, EntryPointVault {
     using ERC4337Utils for PackedUserOperation;
     using SafeERC20 for IERC20;
