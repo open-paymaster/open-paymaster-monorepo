@@ -1,2 +1,14 @@
 frontend/pnpm-lock.yaml
 frontend/yarn.lock
+
+# Environment variables
+.env
+
+# Node modules
+node_modules/
+
+# Package lock files
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+bun.lockb

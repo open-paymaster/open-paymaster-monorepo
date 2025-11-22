@@ -1,9 +1,0 @@
-{
-    "extends": "solhint:recommended",
-    "plugins": [],
-    "rules": {
-        "use-natspec": "off",
-        "no-empty-blocks": "off",
-        "gas-indexed-events": "off"
-    }
-}

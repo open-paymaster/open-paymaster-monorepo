@@ -1,5 +1,5 @@
 import hre from 'hardhat';
-import { oracleAbi } from 'paymaster-sdk';
+import { oracleMockAbi } from 'paymaster-sdk';
 import { loadForgeArtifact } from '../src/helpers';
 
 /**
@@ -9,10 +9,10 @@ async function main() {
 	const [deployer] = await hre.viem.getWalletClients();
 	const publicClient = await hre.viem.getPublicClient();
 
-	const { bytecode } = loadForgeArtifact('Oracle');
+	const { bytecode } = loadForgeArtifact('OracleMock');
 
 	const hash = await deployer.deployContract({
-		abi: oracleAbi,
+		abi: oracleMockAbi,
 		bytecode,
 		args: [],
 	});

@@ -1,12 +1,13 @@
 import hre from 'hardhat';
 import { oracleMockAbi } from 'paymaster-sdk';
-import { getContract } from 'viem';
+import { getContract, parseEther } from 'viem';
 import { getChainConfig } from '../src/config';
 
 /**
  * Deploy the UniversalPaymaster contract to the selected chain
  */
 async function main() {
+    const [deployer] = await hre.viem.getWalletClients();
 	const [chainConfig] = getChainConfig();
 	const publicClient = await hre.viem.getPublicClient();
 
@@ -15,11 +16,19 @@ async function main() {
 	const oracleContract = getContract({
 		address: chainConfig.ORACLE,
 		abi: oracleMockAbi,
-		client: { public: publicClient },
+		client: { public: publicClient, wallet: deployer },
 	});
 
-	const price = await oracleContract.read.getTokenPriceInEth([chainConfig.USDC]);
-	console.log('Price', price);
+    const ethPrice = 2794;
+    const oneDollarInWei = parseEther((1 / ethPrice).toString());
+    console.log('One dollar in wei', oneDollarInWei);
+
+	const hash = await oracleContract.write.setTokenPriceInEth([chainConfig.USDC, oneDollarInWei]);
+	console.log('Hash', hash);
+
+	await publicClient.waitForTransactionReceipt({ hash });
+
+	console.log('Token price set');
 }
 
 main()

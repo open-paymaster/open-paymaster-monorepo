@@ -23,6 +23,7 @@
     "rebalance": "hardhat run scripts/rebalance.ts",
     "query-pool": "hardhat run scripts/queryPool.ts",
     "query-oracle": "hardhat run scripts/queryOracle.ts",
+    "set-token-price": "hardhat run scripts/setTokenPrice.ts",
     "delegate": "hardhat run scripts/delegate.ts",
     "approve": "hardhat run scripts/approve.ts",
     "verify-approval": "hardhat run scripts/verifyApproval.ts",
