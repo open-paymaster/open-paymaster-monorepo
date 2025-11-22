@@ -9,6 +9,7 @@
         "clean": "hardhat clean"
     },
     "devDependencies": {
+        "solhint": "^6.0.1",
         "@nomicfoundation/hardhat-ignition": "^3.0.5",
         "@nomicfoundation/hardhat-toolbox-viem": "^5.0.1",
         "@types/node": "^22.19.1",
@@ -21,7 +22,6 @@
     },
     "dependencies": {
         "@eth-infinitism/account-abstraction": "github:eth-infinitism/account-abstraction",
-        "@openzeppelin/contracts": "^5.4.0",
-        "solhint": "^6.0.1"
+        "@openzeppelin/contracts": "^5.4.0"
     }
 }
