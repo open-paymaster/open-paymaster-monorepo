@@ -22,6 +22,6 @@
     },
     "dependencies": {
         "@eth-infinitism/account-abstraction": "github:eth-infinitism/account-abstraction",
-        "@openzeppelin/contracts": "^5.4.0"
+        "@openzeppelin/contracts": "^5.5.0"
     }
 }

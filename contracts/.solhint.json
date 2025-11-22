@@ -3,6 +3,7 @@
     "plugins": [],
     "rules": {
         "use-natspec": "off",
-        "no-empty-blocks": "off"
+        "no-empty-blocks": "off",
+        "gas-indexed-events": "off"
     }
 }
