@@ -1,14 +1,27 @@
 {
-  "name": "contracts",
-  "version": "1.0.0",
-  "type": "module",
-  "devDependencies": {
-    "@nomicfoundation/hardhat-ignition": "^3.0.5",
-    "@nomicfoundation/hardhat-toolbox-viem": "^5.0.1",
-    "@types/node": "^22.19.1",
-    "forge-std": "github:foundry-rs/forge-std#v1.9.4",
-    "hardhat": "^3.0.15",
-    "typescript": "~5.8.3",
-    "viem": "^2.39.3"
-  }
+    "name": "contracts",
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "build": "hardhat compile",
+        "test": "hardhat test",
+        "lint": "prettier --write \"**/*.{ts,js,json,md}\" && prettier --write \"contracts/**/*.sol\" && solhint \"contracts/**/*.sol\"",
+        "clean": "hardhat clean"
+    },
+    "devDependencies": {
+        "@nomicfoundation/hardhat-ignition": "^3.0.5",
+        "@nomicfoundation/hardhat-toolbox-viem": "^5.0.1",
+        "@types/node": "^22.19.1",
+        "forge-std": "github:foundry-rs/forge-std#v1.9.4",
+        "hardhat": "^3.0.15",
+        "prettier": "^3.6.2",
+        "prettier-plugin-solidity": "^2.2.0",
+        "typescript": "~5.8.3",
+        "viem": "^2.39.3"
+    },
+    "dependencies": {
+        "@eth-infinitism/account-abstraction": "github:eth-infinitism/account-abstraction",
+        "@openzeppelin/contracts": "^5.4.0",
+        "solhint": "^6.0.1"
+    }
 }
