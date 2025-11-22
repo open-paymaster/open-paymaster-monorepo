@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+
 pragma solidity ^0.8.26;
 
 import {ERC6909TokenSupply} from "@openzeppelin/contracts/token/ERC6909/extensions/ERC6909TokenSupply.sol";
@@ -7,7 +8,7 @@ import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 abstract contract ERC6909NativeVault is ERC6909TokenSupply {
     using Math for uint256;
 
-    // total amount of ETH for a particular ID token.
+    /* @dev Total amount of ETH for a particular ID token. */
     mapping(uint256 id => uint256) private _assets;
 
     event Deposit(address indexed caller, address indexed receiver, uint256 assets, uint256 shares, uint256 id);
@@ -104,7 +105,6 @@ abstract contract ERC6909NativeVault is ERC6909TokenSupply {
      * @dev Internal conversion function (from assets to shares) with support for rounding direction.
      *
      * NOTE: Uses virtual shares (1 wei) to mitigate inflation attacks on empty pools.
-     * This follows the ERC4626 pattern but simplified for native ETH vaults.
      */
     function _convertToShares(
         uint256 assets,
@@ -142,7 +142,7 @@ abstract contract ERC6909NativeVault is ERC6909TokenSupply {
     /**
      * @dev Withdraw/redeem common workflow.
      *
-     * NOTE: Updates asset tracking before sending ETH to prevent reentrancy issues.
+     * IMPORTANT: this function should be overridden and extended to send ETH to the receiver.
      */
     function _withdraw(
         address caller,

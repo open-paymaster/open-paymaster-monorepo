@@ -6,8 +6,6 @@ import {ERC4337Utils} from "@openzeppelin/contracts/account/utils/draft-ERC4337U
 import {IEntryPoint, IPaymaster, PackedUserOperation} from "@openzeppelin/contracts/interfaces/draft-IERC4337.sol";
 
 /**
- * @title BasePaymaster
- * @author gonzaotc
  * @dev Minimal paymaster base contract implementing the ERC-4337 paymaster interface. Provides core validation
  * and post-operation logic that must be extended by concrete implementations.
  */
@@ -21,10 +19,7 @@ abstract contract BasePaymaster is IPaymaster {
         _;
     }
 
-    /**
-     * @notice Returns the canonical ERC-4337 entry point contract that validates user operations.
-     * @return The entry point contract instance.
-     */
+    /* @dev Returns the canonical ERC-4337 entry point contract that validates user operations. */
     function entryPoint() public view virtual returns (IEntryPoint) {
         return ERC4337Utils.ENTRYPOINT_V08;
     }
