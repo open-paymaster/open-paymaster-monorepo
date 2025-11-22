@@ -312,6 +312,9 @@ export function ControlOrb({ options }: ControlOrbProps) {
         onClose={closeTransferPanel}
         eyebrowText="Transfer"
         ariaLabel="Send transfer panel"
+        panelClassName={
+          'before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.25),transparent_45%),radial-gradient(circle_at_bottom_right,rgba(14,165,233,0.2),transparent_40%)]'
+        }
       >
         <TransferPanel onClose={closeTransferPanel} />
       </SlideOver>
