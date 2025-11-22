@@ -9,9 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@heroui/react": "^2.8.5",
-    "@privy-io/react-auth": "^3.7.0",
-    "@radix-ui/react-label": "^2.1.8",
     "@react-three/drei": "^10.7.6",
     "@react-three/fiber": "^9.4.0",
     "@tabler/icons-react": "^3.35.0",
