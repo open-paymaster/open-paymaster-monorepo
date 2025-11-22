@@ -66,7 +66,7 @@ const SlideOver: React.FC<SlideOverProps> = ({
   ]);
 
   const panelClasses = clsx([
-    'fixed right-0 top-0 z-50 h-full w-full max-w-md bg-white/90 p-6 backdrop-blur-lg transition-transform duration-200 ease-out',
+    'fixed right-0 top-0 z-50 h-full w-full max-w-md bg-white/90 backdrop-blur-lg transition-transform duration-200 ease-out',
     isOpen
       ? 'translate-x-0 shadow-[0_35px_100px_rgba(15,23,42,0.2)]'
       : 'translate-x-full',
@@ -91,7 +91,7 @@ const SlideOver: React.FC<SlideOverProps> = ({
       >
         <div
           className={clsx(
-            'mb-4 flex items-center',
+            'p-6 flex items-center',
             headerHasContent ? 'justify-between' : 'justify-end'
           )}
         >
