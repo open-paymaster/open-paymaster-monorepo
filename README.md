@@ -122,6 +122,18 @@ Ethereum should feel like a single, unified chain. Users shouldn't need to under
 
 Universal Paymaster is a step toward making blockchain interactions as simple as using any other internet application—while preserving trustlessness and decentralization.
 
+## ETH Global Hackathon Buenos Aires 2025
+
+This project was built during ETH Global Buenos Aires 2025.
+
+**Integrations & Sponsors:**
+
+**Ethereum Interoperability Layer**: Powering the cross-chain gasless experience
+
+**Pyth Network Pull Oracles**: Enabling real-time token-to-ETH conversion at market prices
+
+**Protocol Labs**: Supporting permissionless, censorship-resistant systems that advance Ethereum ecosystem adoption
+
 ---
 
 Built with the [Trustless Manifesto](https://github.com/ethereum-optimism/EIL) principles: self-custody, censorship resistance, disintermediation, and verifiable on-chain execution.
