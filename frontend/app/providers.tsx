@@ -20,9 +20,9 @@ createAppKit({
   adapters: [wagmiAdapter],
   projectId,
   metadata: {
-    name: 'universal-paymaster',
-    description: 'Universal Paymaster',
-    url: 'universalpaymaster.com',
+    name: 'open-paymaster',
+    description: 'Open Paymaster',
+    url: 'openpaymaster.com',
     icons: [''],
   },
   networks: [base, arbitrum],

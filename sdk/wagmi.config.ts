@@ -8,7 +8,7 @@ export default defineConfig({
     foundry({
       project: "../contracts",
       include: [
-        "UniversalPaymaster.sol/**",
+        "OpenPaymaster.sol/**",
         "EntryPointVault.sol/**",
         "BasePaymaster.sol/**",
         "IOracle.sol/**",

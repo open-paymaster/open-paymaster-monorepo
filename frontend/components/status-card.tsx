@@ -94,8 +94,7 @@ export function StatusCard({ stats: fallbackStats = [] }: StatusCardProps) {
 
     const totalValue = sortedPools.reduce((sum, pool) => sum + pool.value, 0);
     const avgApr =
-      sortedPools.reduce((sum, pool) => sum + pool.apr, 0) /
-      sortedPools.length;
+      sortedPools.reduce((sum, pool) => sum + pool.apr, 0) / sortedPools.length;
     const sevenDayVolumeTotal = sortedPools.reduce(
       (sum, pool) => sum + pool.sevenDayVolume,
       0,
@@ -120,7 +119,7 @@ export function StatusCard({ stats: fallbackStats = [] }: StatusCardProps) {
       {
         label: 'Pools',
         value: `${sortedPools.length}`,
-        change: 'Active on Universal Paymaster',
+        change: 'Active on Open Paymaster',
       },
     ];
 
@@ -131,7 +130,7 @@ export function StatusCard({ stats: fallbackStats = [] }: StatusCardProps) {
     <section className="flex h-full flex-1 flex-col gap-6 rounded-4xl border border-white/75 bg-white/95 p-6 shadow-[0_25px_80px_rgba(15,23,42,0.08)] backdrop-blur-2xl sm:p-7">
       <div>
         <p className="shimmer-heading text-xs font-medium uppercase tracking-[0.4em] text-center">
-          UNIVERSAL PAYMASTER
+          Open Paymaster
         </p>
 
         <div className="flex w-full items-center justify-center">

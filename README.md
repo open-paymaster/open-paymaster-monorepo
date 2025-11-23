@@ -1,4 +1,4 @@
-# Universal Paymaster 🪐
+# Open Paymaster 🪐
 
 A full-stack blockchain application for managing liquidity pools that sponsor transactions. Built with Hardhat 3 for smart contract development and Next.js for the frontend interface.
 
@@ -8,7 +8,7 @@ A full-stack blockchain application for managing liquidity pools that sponsor tr
 
 - **3D Interactive Globe**: WebGL-based visualization of global activity using Three.js
 - **Pool Management**: Dashboard for monitoring and managing liquidity pools
-- **Smart Contract Integration**: Direct interaction with Universal Paymaster contracts via Viem
+- **Smart Contract Integration**: Direct interaction with Open Paymaster contracts via Viem
 - **Multi-Auth Support**: Privy integration with passkey, wallet, and email login
 - **Real-time Analytics**: Pool metrics including TVL, APR, volume, and rebalancing factors
 
@@ -42,7 +42,7 @@ A full-stack blockchain application for managing liquidity pools that sponsor tr
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd universal-paymaster-monorepo
+cd open-paymaster-monorepo
 
 # Install frontend dependencies
 cd frontend
@@ -122,7 +122,7 @@ pnpm start
 ## Project Structure
 
 ```
-universal-paymaster-monorepo/
+open-paymaster-monorepo/
 ├── contracts/                 # Smart contract development
 │   ├── hardhat.config.ts     # Hardhat 3 configuration
 │   ├── scripts/              # Deployment and utility scripts
@@ -151,7 +151,7 @@ universal-paymaster-monorepo/
 
 ## Smart Contracts
 
-The Universal Paymaster protocol implements a liquidity pool system that sponsors blockchain transactions. The contracts use ERC-6909 multi-token vault standard for efficient pool management.
+The Open Paymaster protocol implements a liquidity pool system that sponsors blockchain transactions. The contracts use ERC-6909 multi-token vault standard for efficient pool management.
 
 📖 **[Read the full contracts documentation →](contracts/README.md)**
 
@@ -186,7 +186,7 @@ This project uses Hardhat 3 (Beta) with the following features:
 
 ### Contract Integration
 
-The frontend interacts with Universal Paymaster contracts through [lib/sc-actions.ts](frontend/lib/sc-actions.ts):
+The frontend interacts with Open Paymaster contracts through [lib/sc-actions.ts](frontend/lib/sc-actions.ts):
 
 - **`createPool()`**: Initialize a new liquidity pool
 - **`supplyToPool()`**: Deposit ETH into a pool

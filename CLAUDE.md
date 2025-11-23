@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Universal Paymaster is a full-stack blockchain application consisting of smart contracts (Hardhat 3) and a frontend (Next.js). The system manages liquidity pools that sponsor blockchain transactions using ERC-6909 multi-token vaults.
+Open Paymaster is a full-stack blockchain application consisting of smart contracts (Hardhat 3) and a frontend (Next.js). The system manages liquidity pools that sponsor blockchain transactions using ERC-6909 multi-token vaults.
 
 ## Commands
 
@@ -43,8 +43,8 @@ npx hardhat ignition deploy --network sepolia ignition/modules/Counter.ts  # Sep
 
 ### Smart Contracts
 
-The Universal Paymaster contract implements two main components:
-- **UniversalPaymaster**: Pool management and rebalancing logic
+The Open Paymaster contract implements two main components:
+- **OpenPaymaster**: Pool management and rebalancing logic
 - **ERC6909NativeEntryPointVault**: Multi-token vault for ETH deposits/withdrawals
 
 Full contract documentation with diagrams is in [contracts/README.md](contracts/README.md).
@@ -67,7 +67,7 @@ Contract interactions are centralized in [lib/sc-actions.ts](frontend/lib/sc-act
   - `withdrawFromPool()` - Withdraw via `withdraw`
   - `rebalancePool()` - Rebalance pool liquidity via `rebalance`
 
-The Universal Paymaster ABI is defined in [lib/abi/universalPaymaster.ts](frontend/lib/abi/universalPaymaster.ts).
+The Open Paymaster ABI is defined in [lib/abi/OpenPaymaster.ts](frontend/lib/abi/OpenPaymaster.ts).
 
 ### Environment Configuration
 

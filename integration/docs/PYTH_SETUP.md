@@ -76,7 +76,7 @@ BTC_USD  = '0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43'
 
 ## Deploy Paymaster with Pyth
 
-Deploy the Universal Paymaster with the PythMock:
+Deploy the Open Paymaster with the PythMock:
 
 ```bash
 PYTH_ADDRESS=0x... \

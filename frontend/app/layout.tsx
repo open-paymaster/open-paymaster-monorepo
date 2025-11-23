@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Universal Paymaster 🪐',
+  title: 'Open Paymaster 🪐',
   description: 'made in Argentina 🇦🇷🇦🇷',
 };
 

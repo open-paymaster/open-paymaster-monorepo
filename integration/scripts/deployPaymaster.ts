@@ -1,10 +1,10 @@
 import hre from 'hardhat';
-import { universalPaymasterAbi } from 'paymaster-sdk';
+import { OpenPaymasterAbi } from 'paymaster-sdk';
 import { loadForgeArtifact } from '../src/helpers';
 import { Address, Hash } from 'viem';
 
 /**
- * Deploy the UniversalPaymaster contract to the selected chain
+ * Deploy the OpenPaymaster contract to the selected chain
  * 
  * Usage:
  * PYTH_ADDRESS=0x... \
@@ -14,7 +14,7 @@ import { Address, Hash } from 'viem';
 async function main() {
 	const [deployer] = await hre.viem.getWalletClients();
 	const publicClient = await hre.viem.getPublicClient();
-	const { bytecode } = loadForgeArtifact('UniversalPaymaster');
+	const { bytecode } = loadForgeArtifact('OpenPaymaster');
 
 	// Default ETH/USD feed ID
 	const DEFAULT_ETH_FEED_ID = '0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace';
@@ -34,7 +34,7 @@ async function main() {
 	console.log(`  ETH Feed ID: ${params.ethFeedId}\n`);
 
 	const hash = await deployer.deployContract({
-		abi: universalPaymasterAbi,
+		abi: OpenPaymasterAbi,
 		bytecode,
 		args: [params.pythAddress, params.ethFeedId],
 	});

@@ -3,7 +3,7 @@ import { oracleMockAbi } from 'paymaster-sdk';
 import { loadForgeArtifact } from '../src/helpers';
 
 /**
- * Deploy the UniversalPaymaster contract to the selected chain
+ * Deploy the OpenPaymaster contract to the selected chain
  */
 async function main() {
 	const [deployer] = await hre.viem.getWalletClients();

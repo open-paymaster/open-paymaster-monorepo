@@ -1,10 +1,10 @@
 /**
- * UniversalPaymaster SDK
+ * OpenPaymaster SDK
  *
- * A simple SDK for interacting with the UniversalPaymaster contract.
+ * A simple SDK for interacting with the OpenPaymaster contract.
  * Built on top of viem.
  *
- * @module universal-paymaster-sdk
+ * @module open-paymaster-sdk
  */
 
 export * from './constants.js';

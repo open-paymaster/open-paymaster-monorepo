@@ -13,7 +13,7 @@ import {
 } from 'viem';
 
 import { env } from '@/config/env';
-import { universalPaymasterAbi } from '@/lib/abi/universalPaymaster';
+import { OpenPaymasterAbi } from '@/lib/abi/OpenPaymaster';
 
 export type PoolInitializedLog = {
   token: Address;
@@ -233,7 +233,7 @@ export async function createPool(params: CreatePoolParams) {
   return writeContract({
     action: 'createPool',
     address: paymasterAddress,
-    abi: universalPaymasterAbi,
+    abi: OpenPaymasterAbi,
     functionName: 'initializePool',
     args: [token, lpFeeBps, rebalancingFeeBps, oracle],
     account,
@@ -248,7 +248,7 @@ export async function supplyToPool(params: SupplyPoolParams) {
   return writeContract({
     action: 'supplyToPool',
     address: paymasterAddress,
-    abi: universalPaymasterAbi,
+    abi: OpenPaymasterAbi,
     functionName: 'deposit',
     args: [assetsWei, receiver, id],
     value: assetsWei, // MUST equal `assets` or it will revert
@@ -264,7 +264,7 @@ export async function withdrawFromPool(params: WithdrawPoolParams) {
   return writeContract({
     action: 'withdrawFromPool',
     address: paymasterAddress,
-    abi: universalPaymasterAbi,
+    abi: OpenPaymasterAbi,
     functionName: 'withdraw',
     args: [assetsWei, receiver, owner, id],
     account,
@@ -277,7 +277,7 @@ export async function rebalancePool(params: RebalancePoolParams) {
   return writeContract({
     action: 'rebalancePool',
     address: paymasterAddress,
-    abi: universalPaymasterAbi,
+    abi: OpenPaymasterAbi,
     functionName: 'rebalance',
     args: [token, tokenAmount, receiver],
     value: maxEthToSend,
@@ -294,7 +294,7 @@ export async function fetchPoolInitializedLogs(): Promise<
 > {
   const logs = await publicClient.getContractEvents({
     address: env.paymasterAddress as Address,
-    abi: universalPaymasterAbi,
+    abi: OpenPaymasterAbi,
     eventName: 'PoolInitialized',
     fromBlock: BigInt(0), // optionally replace with deployment block
   });

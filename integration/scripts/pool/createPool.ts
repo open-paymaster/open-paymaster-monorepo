@@ -1,10 +1,10 @@
 import hre from 'hardhat';
-import { universalPaymasterAbi } from 'paymaster-sdk';
+import { OpenPaymasterAbi } from 'paymaster-sdk';
 import { getContract } from 'viem';
 import { getChainConfig } from '../src/config';
 
 /**
- * Deploy the UniversalPaymaster contract to the selected chain
+ * Deploy the OpenPaymaster contract to the selected chain
  */
 async function main() {
 	const [deployer] = await hre.viem.getWalletClients();
@@ -13,7 +13,7 @@ async function main() {
 
 	const paymasterContract = getContract({
 		address: chainConfig.PAYMASTER,
-		abi: universalPaymasterAbi,
+		abi: OpenPaymasterAbi,
 		client: { public: publicClient, wallet: deployer },
 	});
 

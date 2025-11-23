@@ -7,7 +7,7 @@ export type PaymasterData = {
 
 export const paymaster = {
 	/**
-	 * Builds the paymaster data for the UniversalPaymaster contract.
+	 * Builds the paymaster data for the OpenPaymaster contract.
 	 * @param params - The parameters for the paymaster data.
 	 * @returns The paymaster data.
 	 */

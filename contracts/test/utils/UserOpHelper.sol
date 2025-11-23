@@ -32,16 +32,26 @@ contract UserOpHelper is Test {
             nonce: nonce,
             initCode: "",
             callData: callData,
-            accountGasLimits: bytes32(abi.encodePacked(uint128(verificationGasLimit), uint128(callGasLimit))),
+            accountGasLimits: bytes32(
+                abi.encodePacked(
+                    uint128(verificationGasLimit),
+                    uint128(callGasLimit)
+                )
+            ),
             preVerificationGas: preVerificationGas,
-            gasFees: bytes32(abi.encodePacked(uint128(maxPriorityFeePerGas), uint128(maxFeePerGas))),
+            gasFees: bytes32(
+                abi.encodePacked(
+                    uint128(maxPriorityFeePerGas),
+                    uint128(maxFeePerGas)
+                )
+            ),
             paymasterAndData: paymasterAndData,
             signature: ""
         });
     }
 
     /**
-     * @dev Builds paymaster data for the UniversalPaymaster with Pyth price updates
+     * @dev Builds paymaster data for the OpenPaymaster with Pyth price updates
      */
     function buildPaymasterData(
         address paymaster,
@@ -50,32 +60,37 @@ contract UserOpHelper is Test {
         address token,
         bytes[] memory priceUpdateData
     ) public pure returns (bytes memory) {
-        return abi.encodePacked(
-            paymaster, paymasterVerificationGasLimit, paymasterPostOpGasLimit, abi.encode(token, priceUpdateData)
-        );
+        return
+            abi.encodePacked(
+                paymaster,
+                paymasterVerificationGasLimit,
+                paymasterPostOpGasLimit,
+                abi.encode(token, priceUpdateData)
+            );
     }
 
     /**
      * @dev Signs a UserOperation with the given private key
      */
-    function signUserOp(PackedUserOperation calldata userOp, uint256 privateKey, address entryPoint)
-        public
-        view
-        returns (PackedUserOperation memory signedUserOp)
-    {
+    function signUserOp(
+        PackedUserOperation calldata userOp,
+        uint256 privateKey,
+        address entryPoint
+    ) public view returns (PackedUserOperation memory signedUserOp) {
         bytes32 userOpHash = userOp.hash(entryPoint);
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, userOpHash);
 
-        return PackedUserOperation({
-            sender: userOp.sender,
-            nonce: userOp.nonce,
-            initCode: userOp.initCode,
-            callData: userOp.callData,
-            accountGasLimits: userOp.accountGasLimits,
-            preVerificationGas: userOp.preVerificationGas,
-            gasFees: userOp.gasFees,
-            paymasterAndData: userOp.paymasterAndData,
-            signature: abi.encodePacked(r, s, v)
-        });
+        return
+            PackedUserOperation({
+                sender: userOp.sender,
+                nonce: userOp.nonce,
+                initCode: userOp.initCode,
+                callData: userOp.callData,
+                accountGasLimits: userOp.accountGasLimits,
+                preVerificationGas: userOp.preVerificationGas,
+                gasFees: userOp.gasFees,
+                paymasterAndData: userOp.paymasterAndData,
+                signature: abi.encodePacked(r, s, v)
+            });
     }
 }

@@ -10,7 +10,7 @@ import {
   fetchPoolInitializedLogs,
 } from '@/lib/sc-actions';
 import { env } from '@/config/env';
-import { universalPaymasterAbi } from '@/lib/abi/universalPaymaster';
+import { OpenPaymasterAbi } from '@/lib/abi/OpenPaymaster';
 import { mapPoolLogToRow } from '@/lib/utils';
 
 const QUERY_KEY = ['pools', 'PoolInitialized'];
@@ -30,7 +30,7 @@ export default function useGetPools() {
   useEffect(() => {
     const unwatch = publicClient.watchContractEvent({
       address: env.paymasterAddress as Address,
-      abi: universalPaymasterAbi,
+      abi: OpenPaymasterAbi,
       eventName: 'PoolInitialized',
       // if you don't have websocket transport, polling is fine:
       poll: true,
