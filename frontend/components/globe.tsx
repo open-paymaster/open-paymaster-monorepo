@@ -97,7 +97,7 @@ const createLinePositions = (data: GeoJSON) => {
           prev[2],
           current[0],
           current[1],
-          current[2]
+          current[2],
         );
       }
       prev = current;
@@ -154,7 +154,7 @@ const GlobePoints = memo(() => {
     () => () => {
       geometry.dispose();
     },
-    [geometry]
+    [geometry],
   );
 
   const materialRef = useRef<ShaderMaterial>(null);
@@ -162,7 +162,7 @@ const GlobePoints = memo(() => {
     () => ({
       uPointSize: { value: 3 },
     }),
-    []
+    [],
   );
 
   const { size } = useThree();
@@ -218,7 +218,7 @@ const ContinentalLines = () => {
     () => () => {
       geometry?.dispose();
     },
-    [geometry]
+    [geometry],
   );
 
   if (!geometry) {
@@ -263,7 +263,7 @@ export const GlobeCanvas = () => {
   const router = useRouter();
 
   const handleNavigate = () => {
-    router.push('/pools');
+    router.push('/');
   };
 
   return (
@@ -278,7 +278,8 @@ export const GlobeCanvas = () => {
           event.preventDefault();
           handleNavigate();
         }
-      }}>
+      }}
+    >
       <div className="aspect-square w-full">
         <Canvas
           camera={{ position: [0, 0, 3.2], fov: 45, near: 0.1, far: 100 }}
@@ -287,7 +288,8 @@ export const GlobeCanvas = () => {
             antialias: true,
             alpha: true,
             powerPreference: 'high-performance',
-          }}>
+          }}
+        >
           <ambientLight intensity={0.45} />
           <directionalLight position={[5, 3, 5]} intensity={1.2} />
           <directionalLight position={[-5, -2, -3]} intensity={0.35} />

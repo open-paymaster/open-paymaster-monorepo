@@ -54,8 +54,8 @@ const buildDefaultOptions = ({
     onSelect: openTransferPanel,
   },
   {
-    id: 'pools',
-    label: 'View pools',
+    id: 'black-hole',
+    label: 'View a black hole',
     accent:
       'radial-gradient(circle at 40% 15%, rgba(245, 243, 255, 0.95), rgba(199, 210, 254, 0.4) 55%, rgba(129, 140, 248, 0.25))',
     icon: (
@@ -73,7 +73,7 @@ const buildDefaultOptions = ({
         <path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5" />
       </svg>
     ),
-    onSelect: () => navigate('/pools'),
+    onSelect: () => navigate('/black-hole'),
   },
 ];
 

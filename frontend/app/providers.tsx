@@ -52,7 +52,7 @@ export const Providers = ({ children }: PropsWithChildren) => {
       <QueryClientProvider client={queryClient}>
         <PoolsProvider>
           {children}
-          {pathname != '/' && <ControlOrb />}
+          {pathname != '/black-hole' && <ControlOrb />}
           <Toaster
             position="top-center"
             toastOptions={{

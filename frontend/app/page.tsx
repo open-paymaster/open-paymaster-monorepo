@@ -1,16 +1,50 @@
-import { AppHeader } from '@/components/app-header';
-import { GlobeCanvas } from '@/components/globe';
-import { HoleBackground } from '@/components/ui/hole';
+import { PoolSection } from '@/components/pool-section';
+import { StatusCard } from '@/components/status-card';
+
+async function deposit(formData: FormData) {
+  'use server';
+  console.log('Queue rebalance for', formData.get('poolId'));
+}
+
+async function withdraw(formData: FormData) {
+  'use server';
+  console.log('Pause automation for', formData.get('poolId'));
+}
+
+const stats = [
+  { label: 'TVL', value: '$120.4K', change: '+12.1% vs last week' },
+  { label: 'Avg. APR', value: '5.8%', change: 'Blended across active pools' },
+  {
+    label: 'Daily Volume',
+    value: '$14.2K',
+    change: 'Across 42 supported assets',
+  },
+  { label: 'Txs Sponsored', value: '2784', change: 'In the last 24h' },
+];
+
+const poolActions = [
+  {
+    label: 'Deposit',
+    description: 'Add capital to boost this pool’s available liquidity.',
+    action: deposit,
+  },
+  {
+    label: 'Withdraw',
+    description: 'Unwind capital from the pool back to treasury control.',
+    action: withdraw,
+    variant: 'ghost' as const,
+  },
+];
 
 export default function Home() {
   return (
-    <main className="absolute inset-0 flex h-screen w-screen flex-col overflow-hidden bg-black">
-      <div className="relative flex h-full w-full items-center justify-center">
-        <HoleBackground />
+    <main className="flex flex-1 min-h-0 w-full flex-col gap-6 lg:flex-row lg:items-stretch lg:gap-8">
+      <div className="flex w-full flex-1 min-h-0 lg:w-3/4 *:flex-1 *:min-h-0">
+        <PoolSection actions={poolActions} />
+      </div>
 
-        <div className="absolute w-[400px] h-[400px] top-35">
-          <GlobeCanvas />
-        </div>
+      <div className="flex w-full min-h-0 lg:w-1/4">
+        <StatusCard stats={stats} />
       </div>
     </main>
   );
