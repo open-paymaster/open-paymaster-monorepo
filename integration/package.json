@@ -13,22 +13,13 @@
     "clean": "hardhat clean && cd ../contracts && forge clean",
     "node": "hardhat node",
     "lint": "prettier --write test/ scripts/ && eslint test/ scripts/",
+    "deploy-pyth-oracle": "hardhat run scripts/oracle/deployPythOracle.ts",
+    "set-pyth-oracle-price": "hardhat run scripts/oracle/setPythOraclePrice.ts",
+    "query-oracle": "hardhat run scripts/oracle/queryOracle.ts",
     "deploy-paymaster": "hardhat run scripts/deployPaymaster.ts",
-    "deploy-oracle": "hardhat run scripts/deployOracle.ts",
-    "deploy-erc20": "hardhat run scripts/deployERC20.ts",
-    "mint-erc20": "hardhat run scripts/mintERC20.ts",
-    "create-pool": "hardhat run scripts/createPool.ts",
-    "deposit": "hardhat run scripts/deposit.ts",
-    "withdraw": "hardhat run scripts/withdraw.ts",
-    "rebalance": "hardhat run scripts/rebalance.ts",
-    "query-pool": "hardhat run scripts/queryPool.ts",
-    "query-oracle": "hardhat run scripts/queryOracle.ts",
-    "set-token-price": "hardhat run scripts/setTokenPrice.ts",
-    "delegate": "hardhat run scripts/delegate.ts",
-    "approve": "hardhat run scripts/approve.ts",
-    "verify-approval": "hardhat run scripts/verifyApproval.ts",
-    "send-user-op": "hardhat run scripts/sendUserOp.ts",
-    "send-sponsored-user-op": "hardhat run scripts/sendSponsoredUserOp.ts"
+    "initialize-pool": "hardhat run scripts/pool/initializePool.ts",
+    "query-pool": "hardhat run scripts/pool/queryPool.ts",
+    "delegate": "hardhat run scripts/delegate.ts"
   },
   "dependencies": {
     "paymaster-sdk": "workspace:*"

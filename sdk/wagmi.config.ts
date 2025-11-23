@@ -13,6 +13,8 @@ export default defineConfig({
         "BasePaymaster.sol/**",
         "IOracle.sol/**",
         "OracleMock.sol/**",
+        "PythOracleAdapter.sol/**",
+        "PythMock.sol/**",
         "IEntryPoint.sol/**",
         "EntryPoint.sol/**",
         "ERC20Mock.sol/**",

@@ -161,15 +161,8 @@ function TransferPanel({ className, onClose }: TransferPanelProps) {
         recepient: addressInput,
       };
 
-<<<<<<< HEAD
-      console.log(params)
-
-      const callbackFn: ExecCallback = ({revertReason, type, index}) => {
-        console.log('Callback data:', {revertReason, type, index});
-=======
       const callbackFn: ExecCallback = ({ revertReason, type, index }) => {
         console.log('Callback data:', { revertReason, type, index });
->>>>>>> f358fc7cc74e18c9345bee4671524aa165650e10
       };
 
       await crossChainTransfer(

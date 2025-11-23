@@ -74,11 +74,6 @@ export async function createEilSdk(): Promise<{
 }
 
 export async function crossChainTransfer(
-<<<<<<< HEAD
-  // tokenAddress: Address,
-  // tokenLabel: string,
-=======
->>>>>>> f358fc7cc74e18c9345bee4671524aa165650e10
   amount: bigint,
   recipient: Address,
   callback: ExecCallback,
@@ -87,20 +82,6 @@ export async function crossChainTransfer(
   console.log('Cross chain transfer', {amount, recipient, paymaster, callback});
   const { sdk, account } = await createEilSdk();
 
-<<<<<<< HEAD
-  const chainId1 = BigInt(arbitrum.id);
-  const chainId0 = BigInt(base.id);
-  
-  const userOpOriginChainOverride = {
-    // paymaster: '0xc7F3D98ed15c483C0f666d9F3EA0Dc7abEe77ca2' as Address,
-    // paymasterVerificationGasLimit: BigInt(100_000),
-    // paymasterPostOpGasLimit: BigInt(100_000),
-    maxFeePerGas: BigInt(1000000000),
-    maxPriorityFeePerGas: BigInt(100),
-  };
-  const userOpDestinationChainOverride = {
-    maxFeePerGas: BigInt(1000000000),
-=======
   const chainId0 = BigInt(base.id);
   const chainId1 = BigInt(arbitrum.id);
 
@@ -113,7 +94,6 @@ export async function crossChainTransfer(
   // };
   const userOpOverrideInDestinyChain = {
     maxFeePerGas: BigInt(100_000_000),
->>>>>>> f358fc7cc74e18c9345bee4671524aa165650e10
     maxPriorityFeePerGas: BigInt(100),
   };
 
