@@ -9,6 +9,7 @@ import { LiquidGlassButton } from '@/components/ui/liquid-glass-button';
 import { crossChainTransfer } from '@/lib/x-sc-actions';
 import { Dropdown, type DropdownOption } from '@/components/ui/dropdown';
 import { arbitrum, base, mainnet, optimism } from 'viem/chains';
+import { ExecCallback } from '@eil-protocol/sdk';
 
 type TransferPanelProps = {
   onClose?: () => void;
@@ -56,7 +57,7 @@ const assetOptions: AssetOption[] = [
     value: 'USDC',
     label: 'USD Coin',
     ticker: 'USDC',
-    address: '0xA0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+    address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
     decimals: 6,
     icon: renderIcon('/svg/usdc.svg', 'USD Coin'),
   },
@@ -159,7 +160,11 @@ function TransferPanel({ className, onClose }: TransferPanelProps) {
         recepient: addressInput,
       };
 
-      const callbackFn = () => {};
+      console.log(params)
+
+      const callbackFn: ExecCallback = ({revertReason, type, index, }) => {
+        console.log('Callback data:', {revertReason, type, index, });
+      };
 
       await crossChainTransfer(
         params.tokenAddress as Address,

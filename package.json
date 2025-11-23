@@ -4,11 +4,10 @@
     "private": true,
     "description": "UniversalPaymaster monorepo",
     "license": "MIT",
-    "workspaces": [
-      "sdk",
-      "integration",
-      "frontend"
-    ],
+  "workspaces": [
+    "sdk",
+    "integration"
+  ],
     "scripts": {
       "build": "pnpm -r --filter='!paymaster-integration' build"
     },

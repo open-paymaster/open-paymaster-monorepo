@@ -11,6 +11,7 @@ import {
   type ExecCallback,
   type IMultiChainSmartAccount,
 } from '@eil-protocol/sdk';
+import tokensJson from '@/data/tokens.json';
 
 import { chainIds, wagmiConfig } from '@/config/wagmi-config';
 
@@ -34,38 +35,17 @@ export const BALANCE_PLACEHOLDER: BalanceData = {
 };
 
 async function fetchWalletClient(): Promise<WalletClient | undefined> {
-  // Ensure reconnection is triggered
-  await reconnect(wagmiConfig);
-  // Poll for connector readiness
-  const maxAttempts = 5;
-  const delay = 1000; // 1 second
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    const account = getAccount(wagmiConfig);
-    if (
-      account.isConnected &&
-      account.connector &&
-      typeof account.connector.getChainId === 'function'
-    ) {
-      try {
-        const walletClient = await getWalletClient(wagmiConfig, {
-          connector: account.connector,
-        });
-        console.log('Wallet client:', walletClient);
-        return walletClient;
-      } catch (error) {
-        console.error('Failed to get wallet client:', error);
-        throw error;
-      }
-    }
-    if (attempt === maxAttempts) {
-      throw new Error('Connector not ready after maximum attempts');
-    }
-    console.log(
-      `Attempt ${attempt}: Connector not ready, retrying in ${delay}ms...`
-    );
-    await new Promise((resolve) => setTimeout(resolve, delay));
+  const account = getAccount(wagmiConfig);
+
+  try {
+    const walletClient = await getWalletClient(wagmiConfig, {
+      connector: account.connector,
+    });
+    return walletClient;
+  } catch (error) {
+    console.error('Failed to get wallet client:', error);
+    throw error;
   }
-  return undefined;
 }
 
 export async function createEilSdk(): Promise<{
@@ -79,7 +59,7 @@ export async function createEilSdk(): Promise<{
 
   const ambireBundlerManager = new AmbireBundlerManager(
     walletClient,
-    new Map<bigint, Address>()
+    new Map<bigint, Address>(),
   );
 
   const walletAccount = getAccount(wagmiConfig)?.address ?? zeroAddress;
@@ -87,7 +67,7 @@ export async function createEilSdk(): Promise<{
     walletClient,
     walletAccount,
     [BigInt(chainIds[0]), BigInt(chainIds[1])],
-    ambireBundlerManager
+    ambireBundlerManager,
   );
 
   await ambireAccount.init();
@@ -102,26 +82,26 @@ export async function crossChainTransfer(
   amount: bigint,
   recipient: Address,
   paymaster: Address,
-  callback: ExecCallback
+  callback: ExecCallback,
 ): Promise<void> {
   const { sdk, account } = await createEilSdk();
 
   const [chainId0, chainId1] = chainIds;
 
-  const useropOverride = {
-    maxFeePerGas: BigInt(1000000000),
-    maxPriorityFeePerGas: BigInt(10),
-  };
-  const paymasterOverride = {
-    paymaster: paymaster ?? '0xc7F3D98ed15c483C0f666d9F3EA0Dc7abEe77ca2',
+  
+  const userOpOriginChainOverride = {
+    paymaster: '0xc7F3D98ed15c483C0f666d9F3EA0Dc7abEe77ca2',
     paymasterVerificationGasLimit: BigInt(100_000),
-    paymasterPostOpGasLimit: BigInt(0),
+    paymasterPostOpGasLimit: BigInt(100_000),
+    maxFeePerGas: BigInt(1000000000),
+    maxPriorityFeePerGas: BigInt(100),
+  };
+  const userOpDestinationChainOverride = {
+    maxFeePerGas: BigInt(1000000000),
+    maxPriorityFeePerGas: BigInt(100),
   };
 
-  const token: MultichainToken | undefined = sdk?.createToken(
-    tokenLabel,
-    tokenAddress
-  );
+  const token = sdk.createToken('USDC', tokensJson.USDC)
 
   const executor = await sdk
     .createBuilder()
@@ -132,8 +112,7 @@ export async function crossChainTransfer(
       destinationChainId: chainId1,
       tokens: [{ token, amount }],
     })
-    .overrideUserOp(useropOverride)
-    .overrideUserOp(paymasterOverride)
+    .overrideUserOp(userOpOriginChainOverride)
     .endBatch()
 
     .startBatch(chainId1)
@@ -143,15 +122,21 @@ export async function crossChainTransfer(
         token,
         recipient,
         amount,
-      })
+      }),
     )
-    .overrideUserOp(useropOverride)
+    .overrideUserOp(userOpDestinationChainOverride)
     .endBatch()
 
     .useAccount(account)
     .buildAndSign();
 
-  await executor.execute(callback);
+    try {
+      await executor.execute(callback);
+      
+    } catch (error) {
+      console.error('Error executing transfer:', error);
+      throw error;
+    }
 }
 
 /**
@@ -164,7 +149,7 @@ export async function crossChainTransfer(
 export async function fetchTokenBalances(
   chainIds: number[],
   token: MultichainToken,
-  account: IMultiChainSmartAccount | undefined
+  account: IMultiChainSmartAccount | undefined,
 ): Promise<BalanceData> {
   const client0 = getClient(wagmiConfig, { chainId: chainIds[0] });
   const client1 = getClient(wagmiConfig, { chainId: chainIds[1] });
@@ -193,7 +178,7 @@ export async function fetchTokenBalances(
     'on chain',
     chainIds[0],
     'for account',
-    account0.address
+    account0.address,
   );
 
   // @ts-expect-error - ignore
