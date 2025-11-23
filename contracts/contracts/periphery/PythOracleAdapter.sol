@@ -3,12 +3,10 @@ pragma solidity ^0.8.26;
 
 import "@pythnetwork/pyth-sdk-solidity/IPyth.sol";
 import "@pythnetwork/pyth-sdk-solidity/PythStructs.sol";
-import {IOracle} from "./interfaces/IOracle.sol";
+import {IOracle} from "../interfaces/IOracle.sol";
 
 /// @title PythOracle
 /// @dev Oracle adapter that converts Pyth USD-denominated feeds to TOKEN/ETH prices.
-/// NOTE: This is a view-only adapter that reads cached prices. Prices must be updated
-/// via updatePriceFeeds() before reading for fresh data.
 contract PythOracleAdapter is IOracle {
     IPyth public immutable pyth;
 

@@ -12,10 +12,33 @@ import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {BasePaymaster} from "./BasePaymaster.sol";
 import {EntryPointVault} from "./EntryPointVault.sol";
 import {IOracle} from "../interfaces/IOracle.sol";
-import {PythOracleAdapter} from "../PythOracleAdapter.sol";
+import {PythOracleAdapter} from "../periphery/PythOracleAdapter.sol";
 
 /// @title UniversalPaymaster
 /// @notice A trustless paymaster that allows users to pay for gas with any token.
+///
+/// While most ERC-4337 token paymasters are designed to be owned and operated by a third party and support a single token,
+/// this proposed paymaster is fully decentralized, trustless, and supports any token by initializing new pools.
+/// Additionally, the fees are not fixed by a third party, but rather determined by the liquidity providers and rebalancers,
+/// who are incentivized to compete against each other to keep the pools healthy and balanced by offering the best pricing.
+///
+/// Roles: 
+/// - Liquidity Providers: provides ETH to the paymaster determining which tokens they're willing to support,
+///  earning a yield from `LPFees` paid by the users. LP's can add and withdraw liquidity at any time.
+///
+/// - Users: pays for gas with any token by using the paymaster, paying a premium price of `LPFees` + `RebalancingFees`,
+///  to the LP's and Rebalancers respectively, which maintains the system sustainable and healthy.
+///
+/// - Rebalancers: refill the pool with ETH by buying tokens at a discount price of `RebalancingFees`,
+///  being able to make an arbitrage profit by reselling on the secondary market, while keeping the pools healthy. 
+///
+/// TODO: 
+/// - Permit1 & Permit2 integration for gasless prepayment approvals.
+/// - Supporting multiple pools for a given token, with different `LPFees` and `RebalancingFees` 
+///   configurations, so that different liquidity providers can compete to offer the best pricing.
+/// - Generalizing the Oracle to be able to support any token price feed, not just Pyth.
+/// - Optionally invest idle ETH and token reserves into a yield-bearing protocol, to generate an extra yield for the LP's.
+///
 contract UniversalPaymaster is BasePaymaster, EntryPointVault, PythOracleAdapter {
     using ERC4337Utils for PackedUserOperation;
     using SafeERC20 for IERC20;
@@ -97,6 +120,7 @@ contract UniversalPaymaster is BasePaymaster, EntryPointVault, PythOracleAdapter
         emit PoolInitialized(token, tokenFeedId, lpFeeBps, rebalancingFeeBps);
     }
 
+    // @dev Validates the user operation by pre-charging the user in tokens to cover the gas cost
     function _validatePaymasterUserOp(PackedUserOperation calldata userOp, bytes32, uint256 maxCost)
         internal
         virtual
@@ -135,6 +159,7 @@ contract UniversalPaymaster is BasePaymaster, EntryPointVault, PythOracleAdapter
         return (context, validationData);
     }
 
+    // @dev Refunds any excess token amount to the user and decreases the pool's virtual eth reserves
     function _postOp(PostOpMode, bytes calldata context, uint256 actualGasCost, uint256 actualUserOpFeePerGas)
         internal
         virtual
@@ -202,7 +227,7 @@ contract UniversalPaymaster is BasePaymaster, EntryPointVault, PythOracleAdapter
         return 23_947;
     }
 
-    // allows any permissionless `rebalancer` to rebalance the pool by buying tokens with eth
+    // @dev Allows any permissionless `rebalancer` to rebalance the pool by buying tokens with eth
     // at a discount price of `rebalancingFeeBps` basis points, an economic incentive paid by
     // the users to the rebalancers to keep the pools balanced and healthy.
     function rebalance(address token, uint256 tokenAmount, address receiver)
