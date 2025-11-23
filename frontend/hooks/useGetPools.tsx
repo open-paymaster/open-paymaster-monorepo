@@ -10,7 +10,7 @@ import {
   fetchPoolInitializedLogs,
 } from '@/lib/sc-actions';
 import { env } from '@/config/env';
-import { OpenPaymasterAbi } from '@/lib/abi/OpenPaymaster';
+import { OpenPaymasterAbi } from '@/lib/abi/openPaymasterAbi';
 import { mapPoolLogToRow } from '@/lib/utils';
 
 const QUERY_KEY = ['pools', 'PoolInitialized'];

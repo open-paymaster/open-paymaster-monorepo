@@ -13,7 +13,7 @@ import {
 } from 'viem';
 
 import { env } from '@/config/env';
-import { OpenPaymasterAbi } from '@/lib/abi/OpenPaymaster';
+import { OpenPaymasterAbi } from '@/lib/abi/openPaymasterAbi';
 
 export type PoolInitializedLog = {
   token: Address;
