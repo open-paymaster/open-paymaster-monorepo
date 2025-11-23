@@ -3,7 +3,7 @@ pragma solidity ^0.8.26;
 
 import {Test} from "forge-std/Test.sol";
 import {console} from "forge-std/console.sol";
-import {PythOracleAdapter} from "../contracts/PythOracleAdapter.sol";
+import {PythOracleAdapter} from "../contracts/periphery/PythOracleAdapter.sol";
 import {PythMock} from "./mocks/PythMock.sol";
 
 contract PythOracleTest is Test {

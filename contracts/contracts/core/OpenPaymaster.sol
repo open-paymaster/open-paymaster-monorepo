@@ -12,7 +12,7 @@ import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {BasePaymaster} from "./BasePaymaster.sol";
 import {EntryPointVault} from "./EntryPointVault.sol";
 import {IOracle} from "../interfaces/IOracle.sol";
-import {PythOracleAdapter} from "../PythOracleAdapter.sol";
+import {PythOracleAdapter} from "../periphery/PythOracleAdapter.sol";
 
 /// @title OpenPaymaster
 /// @notice A trustless paymaster that allows users to pay for gas with any token.
@@ -258,7 +258,7 @@ contract OpenPaymaster is BasePaymaster, EntryPointVault, PythOracleAdapter {
         return 23_947;
     }
 
-    // allows any permissionless `rebalancer` to rebalance the pool by buying tokens with eth
+    // @dev Allows any permissionless `rebalancer` to rebalance the pool by buying tokens with eth
     // at a discount price of `rebalancingFeeBps` basis points, an economic incentive paid by
     // the users to the rebalancers to keep the pools balanced and healthy.
     function rebalance(

@@ -5,6 +5,7 @@ pragma solidity ^0.8.26;
 import {ERC6909TokenSupply} from "@openzeppelin/contracts/token/ERC6909/extensions/ERC6909TokenSupply.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 
+/// @dev Built on top of ERC-6909, this vault helps managing liquidity positions and shares accounting for native eth.
 abstract contract ERC6909NativeVault is ERC6909TokenSupply {
     using Math for uint256;
 

@@ -5,6 +5,7 @@ pragma solidity ^0.8.28;
 import {ERC6909NativeVault} from "./ERC6909NativeVault.sol";
 import {IEntryPoint} from "@openzeppelin/contracts/interfaces/draft-IERC4337.sol";
 
+/// @dev Built on top of ERC6909NativeVault, this extension deposits and withdraws from the ERC-4337 entry point.
 abstract contract EntryPointVault is ERC6909NativeVault {
     /* @dev Returns the entry point contract instance. */
     function entryPoint() public view virtual returns (IEntryPoint);
