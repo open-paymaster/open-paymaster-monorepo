@@ -1,6 +1,9 @@
 'use client';
 
+import { User } from 'lucide-react';
 import { useState } from 'react';
+import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
+
 import { LiquidGlassButton } from '@/components/ui/liquid-glass-button';
 import { PoolAnalyticsShell } from '@/components/pool-analytics-shell';
 import type { PoolRow } from '@/data/pools';
@@ -11,6 +14,8 @@ type PoolSectionProps = {
 };
 
 export function PoolSection({ actions, data }: PoolSectionProps) {
+  const { open } = useAppKit();
+  const { isConnected } = useAppKitAccount();
   const [query, setQuery] = useState('');
 
   return (
@@ -32,6 +37,17 @@ export function PoolSection({ actions, data }: PoolSectionProps) {
           </div>
           <LiquidGlassButton type="button" className="sm:w-auto">
             Create
+          </LiquidGlassButton>
+
+          <LiquidGlassButton
+            type="button"
+            className={`h-full ${isConnected ? 'connected-user-button' : ''}`}
+            onClick={() =>
+              void open({ view: isConnected ? 'Account' : 'Connect' })
+            }
+            aria-label="Open wallet"
+          >
+            <User size={20} className="relative z-10" />
           </LiquidGlassButton>
         </div>
       </div>

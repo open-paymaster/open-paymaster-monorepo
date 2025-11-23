@@ -10,7 +10,6 @@ import {
   useCallback,
 } from 'react';
 
-import AuthPanel from '@/components/auth-panel';
 import SlideOver from '@/components/ui/slide-over';
 import TransferPanel from '@/components/transfer-panel';
 
@@ -25,13 +24,11 @@ type ControlOrbProps = {
 
 type BuildOptionsArgs = {
   navigate: (path: string) => void;
-  openUserPanel: () => void;
   openTransferPanel: () => void;
 };
 
 const buildDefaultOptions = ({
   navigate,
-  openUserPanel,
   openTransferPanel,
 }: BuildOptionsArgs): OrbOption[] => [
   {
@@ -78,50 +75,16 @@ const buildDefaultOptions = ({
     ),
     onSelect: () => navigate('/pools'),
   },
-  {
-    id: 'user-actions',
-    label: 'User actions',
-    accent:
-      'radial-gradient(circle at 45% 25%, rgba(254, 242, 242, 0.95), rgba(251, 207, 232, 0.45) 55%, rgba(190, 24, 93, 0.25))',
-    icon: (
-      <svg
-        viewBox="0 0 24 24"
-        className="h-4 w-4 text-rose-900/80 drop-shadow"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <rect x="3" y="5" width="4" height="14" rx="1.4" />
-        <rect x="17" y="5" width="4" height="14" rx="1.4" />
-        <path d="M7 7h10v10H7z" />
-        <path d="M9 7v10" />
-        <path d="M11 7v10" />
-        <path d="M13 7v10" />
-        <path d="M15 7v10" />
-      </svg>
-    ),
-    onSelect: openUserPanel,
-  },
 ];
 
 export function ControlOrb({ options }: ControlOrbProps) {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const [isUserPanelOpen, setIsUserPanelOpen] = useState(false);
+
   const [isTransferPanelOpen, setIsTransferPanelOpen] = useState(false);
 
   const router = useRouter();
   const panelId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const openUserPanel = useCallback(() => {
-    if (typeof window === 'undefined') {
-      setIsUserPanelOpen(true);
-      return;
-    }
-    window.requestAnimationFrame(() => setIsUserPanelOpen(true));
-  }, []);
 
   const openTransferPanel = useCallback(() => {
     if (typeof window === 'undefined') {
@@ -132,17 +95,16 @@ export function ControlOrb({ options }: ControlOrbProps) {
   }, []);
   const closeTransferPanel = useCallback(
     () => setIsTransferPanelOpen(false),
-    []
+    [],
   );
 
   const defaultOptions = useMemo(
     () =>
       buildDefaultOptions({
         navigate: (path) => router.push(path),
-        openUserPanel,
         openTransferPanel,
       }),
-    [router, openUserPanel, openTransferPanel]
+    [router, openTransferPanel],
   );
 
   const resolvedOptions = options ?? defaultOptions;
@@ -317,14 +279,6 @@ export function ControlOrb({ options }: ControlOrbProps) {
         }
       >
         <TransferPanel onClose={closeTransferPanel} />
-      </SlideOver>
-
-      <SlideOver
-        isOpen={isUserPanelOpen}
-        onClose={() => setIsUserPanelOpen(false)}
-        ariaLabel="Account control panel"
-      >
-        <AuthPanel />
       </SlideOver>
     </>
   );
