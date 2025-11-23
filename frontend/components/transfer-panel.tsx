@@ -162,13 +162,11 @@ function TransferPanel({ className, onClose }: TransferPanelProps) {
 
       console.log(params)
 
-      const callbackFn: ExecCallback = ({revertReason, type, index, }) => {
-        console.log('Callback data:', {revertReason, type, index, });
+      const callbackFn: ExecCallback = ({revertReason, type, index}) => {
+        console.log('Callback data:', {revertReason, type, index});
       };
 
       await crossChainTransfer(
-        params.tokenAddress as Address,
-        params.tokenTicker,
         BigInt(params.amount),
         params.recepient as Address,
         params.paymaster as Address,

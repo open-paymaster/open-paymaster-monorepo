@@ -9,8 +9,8 @@ if (!projectId) {
   throw new Error('Reown project ID is not defined');
 }
 
-export const networks = [base, arbitrum];
-export const chainIds = [BigInt(base.id), BigInt(arbitrum.id)];
+export const networks = [arbitrum, base];
+export const chainIds = [BigInt(arbitrum.id), BigInt(base.id)];
 
 export const wagmiAdapter = new WagmiAdapter({
   storage: createStorage({

@@ -14,6 +14,7 @@ import {
 import tokensJson from '@/data/tokens.json';
 
 import { chainIds, wagmiConfig } from '@/config/wagmi-config';
+import { arbitrum, base } from 'viem/chains';
 
 export interface CapturedFlagsData {
   flagHolder0: string;
@@ -77,22 +78,23 @@ export async function createEilSdk(): Promise<{
 }
 
 export async function crossChainTransfer(
-  tokenAddress: Address,
-  tokenLabel: string,
+  // tokenAddress: Address,
+  // tokenLabel: string,
   amount: bigint,
   recipient: Address,
   paymaster: Address,
   callback: ExecCallback,
 ): Promise<void> {
+  console.log('Cross chain transfer', {amount, recipient, paymaster, callback});
   const { sdk, account } = await createEilSdk();
 
-  const [chainId0, chainId1] = chainIds;
-
+  const chainId1 = BigInt(arbitrum.id);
+  const chainId0 = BigInt(base.id);
   
   const userOpOriginChainOverride = {
-    paymaster: '0xc7F3D98ed15c483C0f666d9F3EA0Dc7abEe77ca2',
-    paymasterVerificationGasLimit: BigInt(100_000),
-    paymasterPostOpGasLimit: BigInt(100_000),
+    // paymaster: '0xc7F3D98ed15c483C0f666d9F3EA0Dc7abEe77ca2' as Address,
+    // paymasterVerificationGasLimit: BigInt(100_000),
+    // paymasterPostOpGasLimit: BigInt(100_000),
     maxFeePerGas: BigInt(1000000000),
     maxPriorityFeePerGas: BigInt(100),
   };
