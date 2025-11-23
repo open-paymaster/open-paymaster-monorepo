@@ -85,7 +85,7 @@ export function StatusDonut({ data, totalValue }: StatusDonutProps) {
         <defs>
           {arcData.map((segment, index) => (
             <linearGradient
-              key={`gradient-${segment.data.id}`}
+              key={`gradient-${segment.data.id}-${index}`}
               id={`donut-gradient-${index}`}
               x1="0%"
               y1="0%"
@@ -141,7 +141,7 @@ export function StatusDonut({ data, totalValue }: StatusDonutProps) {
           const path = arcGenerator(segment);
           const centroid = arcGenerator.centroid(segment);
           return path ? (
-            <g key={segment.data.id}>
+            <g key={`g-${segment.data.id}-${index}`}>
               <path
                 pathLength={100}
                 d={path}
