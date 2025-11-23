@@ -3,10 +3,7 @@
 pragma solidity ^0.8.28;
 
 // External
-import {
-    ERC4337Utils,
-    PackedUserOperation
-} from "@openzeppelin/contracts/account/utils/draft-ERC4337Utils.sol";
+import {ERC4337Utils, PackedUserOperation} from "@openzeppelin/contracts/account/utils/draft-ERC4337Utils.sol";
 import {IEntryPoint} from "@openzeppelin/contracts/interfaces/draft-IERC4337.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -75,18 +72,16 @@ contract UniversalPaymaster is BasePaymaster, EntryPointVault, PythOracleAdapter
     // registry of initialized `pool` for a given `token`
     mapping(address token => Pool pool) public pools;
 
+    // constructs the `UniversalPaymaster` contract by initializing the `PythOracleAdapter`
+    // @param _pyth The address of the Pyth contract
+    // @param _ethFeedId The ID of the ETH/USD price feed
     constructor(address _pyth, bytes32 _ethFeedId) PythOracleAdapter(_pyth, _ethFeedId) {}
 
     // initializes a new pool for a given `token`, `lpFeeBps`, `rebalancingFeeBps` and `tokenFeedId`
     // NOTE: In the current version, only one pool can be initialized for a given `token`.
     // @TODO: allow multiple pools for a given `token` with different `lpFeeBps` and `rebalancingFeeBps`.
     // So that different liquidity providers can compete to offer the best pricing.
-    function initializePool(
-        address token,
-        uint24 lpFeeBps,
-        uint24 rebalancingFeeBps,
-        bytes32 tokenFeedId
-    ) public {
+    function initializePool(address token, uint24 lpFeeBps, uint24 rebalancingFeeBps, bytes32 tokenFeedId) public {
         require(pools[token].tokenFeedId == bytes32(0), PoolAlreadyInitialized(token));
         require(tokenFeedId != bytes32(0), InvalidTokenFeedId(tokenFeedId));
         require(
@@ -102,13 +97,14 @@ contract UniversalPaymaster is BasePaymaster, EntryPointVault, PythOracleAdapter
         emit PoolInitialized(token, tokenFeedId, lpFeeBps, rebalancingFeeBps);
     }
 
-    function _validatePaymasterUserOp(
-        PackedUserOperation calldata userOp,
-        bytes32,
-        uint256 maxCost
-    ) internal virtual override returns (bytes memory context, uint256 validationData) {
-        // decode the token from the paymaster data
-        (address token) = abi.decode(userOp.paymasterData(), (address));
+    function _validatePaymasterUserOp(PackedUserOperation calldata userOp, bytes32, uint256 maxCost)
+        internal
+        virtual
+        override
+        returns (bytes memory context, uint256 validationData)
+    {
+        // decode the token and price update data from paymaster data
+        (address token, bytes[] memory priceUpdateData) = abi.decode(userOp.paymasterData(), (address, bytes[]));
 
         // verify the pool is initialized
         Pool memory pool = pools[token];
@@ -117,13 +113,13 @@ contract UniversalPaymaster is BasePaymaster, EntryPointVault, PythOracleAdapter
         // verify the pool has enough eth reserves to cover the gas cost
         require(getPoolEthReserves(token) >= maxCost, PoolNotEnoughEthReserves(maxCost));
 
-        // query the token price from oracle
+        // query the token price from oracle (using cached/stale price for prefund estimation)
         uint256 tokenPriceInEth = getTokenPriceInEth(pool.tokenFeedId);
 
         // query the fees in basis points for the token pool
         uint24 feesBps = pool.lpFeeBps + pool.rebalancingFeeBps;
 
-        // calculate the prefund amount
+        // calculate the prefund amount (conservative estimate)
         uint256 gasCost = _gasCost(maxCost, userOp.maxFeePerGas());
         uint256 prefund = _erc20Cost(gasCost, tokenPriceInEth, feesBps);
 
@@ -133,34 +129,43 @@ contract UniversalPaymaster is BasePaymaster, EntryPointVault, PythOracleAdapter
         // if the prefund payment failed, fail the validation
         if (!prefunded) return (bytes(""), ERC4337Utils.SIG_VALIDATION_FAILED);
 
-        // 9. encode the context for the `postOp` function
-        context = abi.encode(userOp.sender, token, tokenPriceInEth, feesBps, prefund);
+        // encode the context for the `postOp` function including price update data
+        context = abi.encode(userOp.sender, token, tokenPriceInEth, feesBps, prefund, priceUpdateData);
 
         return (context, validationData);
     }
 
-    function _postOp(
-        PostOpMode,
-        bytes calldata context,
-        uint256 actualGasCost,
-        uint256 actualUserOpFeePerGas
-    ) internal virtual override {
-        // 1. decode the context for the `postOp` function
-        (address sender, address token, uint256 tokenPriceInEth, uint256 feesBps, uint256 prefund) =
-            abi.decode(context, (address, address, uint256, uint256, uint256));
+    function _postOp(PostOpMode, bytes calldata context, uint256 actualGasCost, uint256 actualUserOpFeePerGas)
+        internal
+        virtual
+        override
+    {
+        // decode the context for the `postOp` function
+        (
+            address sender,
+            address token,
+            uint256 tokenPriceInEth,
+            uint256 feesBps,
+            uint256 prefund,
+            bytes[] memory priceUpdateData
+        ) = abi.decode(context, (address, address, uint256, uint256, uint256, bytes[]));
 
-        // 2. convert from gas amount to token amount
+        // Update the on-chain prices with fresh data
+        uint256 updateFee = pyth.getUpdateFee(priceUpdateData);
+        pyth.updatePriceFeeds{value: updateFee}(priceUpdateData);
+
+        // convert from gas amount to token amount using FRESH price
         uint256 actualGasCostInEth = _gasCost(actualGasCost, actualUserOpFeePerGas);
         uint256 actualTokenAmount = _erc20Cost(actualGasCostInEth, tokenPriceInEth, feesBps);
 
-        // 2. transfer the excess token amount to the user
+        // transfer the excess token amount to the user
         uint256 excessTokenAmount = prefund - actualTokenAmount;
         if (excessTokenAmount > 0) IERC20(token).safeTransfer(sender, excessTokenAmount);
 
         // track the gas spent in the token pool
         // @TODO: there is a potential issue here that must be improved:
         // We are approximating `actualGasCostInEth` by approximating `postOpCost`, which is unknown at this point in runtime,
-        // and therefore the deltaError may unsynchonize the assets of the token pool, by making the paymaster think this 
+        // and therefore the deltaError may unsynchonize the assets of the token pool, by making the paymaster think this
         // userOp decreased the deposited eth by more or less than it did, messing accountability by small deltas at a time.
         _decreaseAssets(uint256(uint160(token)), actualGasCostInEth);
     }
@@ -182,16 +187,11 @@ contract UniversalPaymaster is BasePaymaster, EntryPointVault, PythOracleAdapter
         erc20CostWithFees = baseErc20Cost + (baseErc20Cost * feesBps / 10000);
     }
 
-    function _gasCost(uint256 cost, uint256 feePerGas)
-        internal
-        view
-        virtual
-        returns (uint256 gasCost)
-    {
+    function _gasCost(uint256 cost, uint256 feePerGas) internal view virtual returns (uint256 gasCost) {
         return (cost + _postOpCost() * feePerGas);
     }
 
-    /// @dev Denominator used for interpreting the `tokenPrice` returned by {_fetchDetails} 
+    /// @dev Denominator used for interpreting the `tokenPrice` returned by {_fetchDetails}
     // as "fixed point" in {_erc20Cost}.
     function _tokenPriceDenominator() internal view virtual returns (uint256) {
         return 1e18;
@@ -199,11 +199,11 @@ contract UniversalPaymaster is BasePaymaster, EntryPointVault, PythOracleAdapter
 
     /// @dev Over-estimates the cost of the post-operation logic
     function _postOpCost() internal pure returns (uint256) {
-        return 20_000;
+        return 23_947;
     }
 
     // allows any permissionless `rebalancer` to rebalance the pool by buying tokens with eth
-    // at a discount price of `rebalancingFeeBps` basis points, an economic incentive paid by 
+    // at a discount price of `rebalancingFeeBps` basis points, an economic incentive paid by
     // the users to the rebalancers to keep the pools balanced and healthy.
     function rebalance(address token, uint256 tokenAmount, address receiver)
         public
@@ -229,9 +229,7 @@ contract UniversalPaymaster is BasePaymaster, EntryPointVault, PythOracleAdapter
         ethAmountAfterDiscount = ethAmount - (ethAmount * pool.rebalancingFeeBps / 10000);
 
         // validate the msg.value amount is enough to cover the eth amount after the rebalancing discount
-        require(
-            msg.value >= ethAmountAfterDiscount, NotEnoughEthSent(msg.value, ethAmountAfterDiscount)
-        );
+        require(msg.value >= ethAmountAfterDiscount, NotEnoughEthSent(msg.value, ethAmountAfterDiscount));
 
         // track the eth added to the pool for the shares accountability
         _increaseAssets(uint256(uint160(token)), ethAmountAfterDiscount);
@@ -261,13 +259,7 @@ contract UniversalPaymaster is BasePaymaster, EntryPointVault, PythOracleAdapter
 
     // required override by Solidity
     // returns the entryPoint defined by the `BasePaymaster` contract.
-    function entryPoint()
-        public
-        view
-        virtual
-        override(BasePaymaster, EntryPointVault)
-        returns (IEntryPoint)
-    {
+    function entryPoint() public view virtual override(BasePaymaster, EntryPointVault) returns (IEntryPoint) {
         return super.entryPoint();
     }
 }

@@ -39,11 +39,29 @@ abstract contract ERC6909NativeVault is ERC6909TokenSupply {
         return _assets[id];
     }
 
-    function maxDeposit(address /* receiver */, uint256 /* id */) public view virtual returns (uint256) {
+    function maxDeposit(
+        address,
+        /* receiver */
+        uint256 /* id */
+    )
+        public
+        view
+        virtual
+        returns (uint256)
+    {
         return type(uint256).max;
     }
 
-    function maxMint(address /* receiver */, uint256 /* id */) public view virtual returns (uint256) {
+    function maxMint(
+        address,
+        /* receiver */
+        uint256 /* id */
+    )
+        public
+        view
+        virtual
+        returns (uint256)
+    {
         return type(uint256).max;
     }
 
@@ -106,11 +124,12 @@ abstract contract ERC6909NativeVault is ERC6909TokenSupply {
      *
      * NOTE: Uses virtual shares (1 wei) to mitigate inflation attacks on empty pools.
      */
-    function _convertToShares(
-        uint256 assets,
-        uint256 id,
-        Math.Rounding rounding
-    ) internal view virtual returns (uint256) {
+    function _convertToShares(uint256 assets, uint256 id, Math.Rounding rounding)
+        internal
+        view
+        virtual
+        returns (uint256)
+    {
         return assets.mulDiv(totalSupply(id) + 1, totalAssets(id) + 1, rounding);
     }
 
@@ -119,11 +138,12 @@ abstract contract ERC6909NativeVault is ERC6909TokenSupply {
      *
      * NOTE: Uses virtual shares (1 wei) to mitigate inflation attacks on empty pools.
      */
-    function _convertToAssets(
-        uint256 shares,
-        uint256 id,
-        Math.Rounding rounding
-    ) internal view virtual returns (uint256) {
+    function _convertToAssets(uint256 shares, uint256 id, Math.Rounding rounding)
+        internal
+        view
+        virtual
+        returns (uint256)
+    {
         return shares.mulDiv(totalAssets(id) + 1, totalSupply(id) + 1, rounding);
     }
 
@@ -144,14 +164,10 @@ abstract contract ERC6909NativeVault is ERC6909TokenSupply {
      *
      * IMPORTANT: this function should be overridden and extended to send ETH to the receiver.
      */
-    function _withdraw(
-        address caller,
-        address receiver,
-        address owner,
-        uint256 assets,
-        uint256 shares,
-        uint256 id
-    ) internal virtual {
+    function _withdraw(address caller, address receiver, address owner, uint256 assets, uint256 shares, uint256 id)
+        internal
+        virtual
+    {
         if (caller != owner) {
             _spendAllowance(owner, caller, id, shares);
         }

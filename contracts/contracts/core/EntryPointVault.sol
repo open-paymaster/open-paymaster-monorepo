@@ -16,14 +16,10 @@ abstract contract EntryPointVault is ERC6909NativeVault {
     }
 
     /* withdraws from the entry point and burn ERC-6909 shares*/
-    function _withdraw(
-        address caller,
-        address receiver,
-        address owner,
-        uint256 assets,
-        uint256 shares,
-        uint256 id
-    ) internal override {
+    function _withdraw(address caller, address receiver, address owner, uint256 assets, uint256 shares, uint256 id)
+        internal
+        override
+    {
         super._withdraw(caller, receiver, owner, assets, shares, id);
         entryPoint().withdrawTo(payable(receiver), assets);
     }

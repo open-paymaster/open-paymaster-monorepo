@@ -9,71 +9,37 @@ contract PythMock is IPyth {
     mapping(bytes32 => PythStructs.Price) private _prices;
 
     /// @dev Set a mock price for a given feed ID
-    function setPrice(bytes32 id, int64 price, uint64 conf, int32 expo, uint256 publishTime)
-        external
-    {
-        _prices[id] = PythStructs.Price({
-            price: price,
-            conf: conf,
-            expo: expo,
-            publishTime: publishTime
-        });
+    function setPrice(bytes32 id, int64 price, uint64 conf, int32 expo, uint256 publishTime) external {
+        _prices[id] = PythStructs.Price({price: price, conf: conf, expo: expo, publishTime: publishTime});
     }
 
     /// @dev Helper to set price with common defaults
     function setPrice(bytes32 id, int64 price, int32 expo) external {
-        _prices[id] = PythStructs.Price({
-            price: price,
-            conf: 0,
-            expo: expo,
-            publishTime: block.timestamp
-        });
+        _prices[id] = PythStructs.Price({price: price, conf: 0, expo: expo, publishTime: block.timestamp});
     }
 
-    function getPriceUnsafe(bytes32 id)
-        external
-        view
-        override
-        returns (PythStructs.Price memory price)
-    {
+    function getPriceUnsafe(bytes32 id) external view override returns (PythStructs.Price memory price) {
         return _prices[id];
     }
 
-    function getPriceNoOlderThan(bytes32 id, uint256)
-        external
-        view
-        override
-        returns (PythStructs.Price memory price)
-    {
+    function getPriceNoOlderThan(bytes32 id, uint256) external view override returns (PythStructs.Price memory price) {
         return _prices[id];
     }
 
-    function getEmaPrice(bytes32 id)
-        external
-        view
-        returns (PythStructs.Price memory price)
-    {
+    function getEmaPrice(bytes32 id) external view returns (PythStructs.Price memory price) {
         return _prices[id];
     }
 
-    function getEmaPriceUnsafe(bytes32 id)
-        external
-        view
-        returns (PythStructs.Price memory price)
-    {
+    function getEmaPriceUnsafe(bytes32 id) external view returns (PythStructs.Price memory price) {
         return _prices[id];
     }
 
-    function getEmaPriceNoOlderThan(bytes32 id, uint256)
-        external
-        view
-        returns (PythStructs.Price memory price)
-    {
+    function getEmaPriceNoOlderThan(bytes32 id, uint256) external view returns (PythStructs.Price memory price) {
         return _prices[id];
     }
 
     function getUpdateFee(bytes[] calldata) external pure override returns (uint256) {
-        return 1; // 1 wei for testing
+        return 0; // Free updates for testing (in production this costs ~1 wei per feed)
     }
 
     function updatePriceFeeds(bytes[] calldata) external payable override {
@@ -88,42 +54,33 @@ contract PythMock is IPyth {
         // No-op for mock
     }
 
-    function parsePriceFeedUpdates(
-        bytes[] calldata,
-        bytes32[] calldata,
-        uint64,
-        uint64
-    ) external payable override returns (PythStructs.PriceFeed[] memory) {
-        return new PythStructs.PriceFeed[](0);
-    }
-
-    function parsePriceFeedUpdatesUnique(
-        bytes[] calldata,
-        bytes32[] calldata,
-        uint64,
-        uint64
-    ) external payable override returns (PythStructs.PriceFeed[] memory) {
-        return new PythStructs.PriceFeed[](0);
-    }
-
-    function getTwapUpdateFee(bytes[] calldata)
+    function parsePriceFeedUpdates(bytes[] calldata, bytes32[] calldata, uint64, uint64)
         external
-        pure
+        payable
         override
-        returns (uint256 feeAmount)
+        returns (PythStructs.PriceFeed[] memory)
     {
+        return new PythStructs.PriceFeed[](0);
+    }
+
+    function parsePriceFeedUpdatesUnique(bytes[] calldata, bytes32[] calldata, uint64, uint64)
+        external
+        payable
+        override
+        returns (PythStructs.PriceFeed[] memory)
+    {
+        return new PythStructs.PriceFeed[](0);
+    }
+
+    function getTwapUpdateFee(bytes[] calldata) external pure override returns (uint256 feeAmount) {
         return 1;
     }
 
-    function parsePriceFeedUpdatesWithConfig(
-        bytes[] calldata,
-        bytes32[] calldata,
-        uint64,
-        uint64,
-        bool,
-        bool,
-        bool
-    ) external payable returns (PythStructs.PriceFeed[] memory, uint64[] memory) {
+    function parsePriceFeedUpdatesWithConfig(bytes[] calldata, bytes32[] calldata, uint64, uint64, bool, bool, bool)
+        external
+        payable
+        returns (PythStructs.PriceFeed[] memory, uint64[] memory)
+    {
         return (new PythStructs.PriceFeed[](0), new uint64[](0));
     }
 

@@ -25,21 +25,21 @@ abstract contract BasePaymaster is IPaymaster {
     }
 
     /* @inheritdoc IPaymaster */
-    function validatePaymasterUserOp(
-        PackedUserOperation calldata userOp,
-        bytes32 userOpHash,
-        uint256 maxCost
-    ) public virtual onlyEntryPoint returns (bytes memory context, uint256 validationData) {
+    function validatePaymasterUserOp(PackedUserOperation calldata userOp, bytes32 userOpHash, uint256 maxCost)
+        public
+        virtual
+        onlyEntryPoint
+        returns (bytes memory context, uint256 validationData)
+    {
         return _validatePaymasterUserOp(userOp, userOpHash, maxCost);
     }
 
     /* @inheritdoc IPaymaster */
-    function postOp(
-        PostOpMode mode,
-        bytes calldata context,
-        uint256 actualGasCost,
-        uint256 actualUserOpFeePerGas
-    ) public virtual onlyEntryPoint {
+    function postOp(PostOpMode mode, bytes calldata context, uint256 actualGasCost, uint256 actualUserOpFeePerGas)
+        public
+        virtual
+        onlyEntryPoint
+    {
         _postOp(mode, context, actualGasCost, actualUserOpFeePerGas);
     }
 
@@ -57,11 +57,10 @@ abstract contract BasePaymaster is IPaymaster {
      * @return context Data to be passed to {_postOp} for post-execution logic.
      * @return validationData Encoded validation result (0 for success, 1 for failure, or timeRange encoding).
      */
-    function _validatePaymasterUserOp(
-        PackedUserOperation calldata userOp,
-        bytes32 userOpHash,
-        uint256 requiredPreFund
-    ) internal virtual returns (bytes memory context, uint256 validationData);
+    function _validatePaymasterUserOp(PackedUserOperation calldata userOp, bytes32 userOpHash, uint256 requiredPreFund)
+        internal
+        virtual
+        returns (bytes memory context, uint256 validationData);
 
     /**
      * @dev Hook called after the user operation executes, receiving the context from {_validatePaymasterUserOp}.
@@ -75,12 +74,9 @@ abstract contract BasePaymaster is IPaymaster {
      * @param actualGasCost The actual gas cost paid by the paymaster in native tokens.
      * @param actualUserOpFeePerGas The effective gas price used for this specific user operation.
      */
-    function _postOp(
-        PostOpMode mode,
-        bytes calldata context,
-        uint256 actualGasCost,
-        uint256 actualUserOpFeePerGas
-    ) internal virtual {}
+    function _postOp(PostOpMode mode, bytes calldata context, uint256 actualGasCost, uint256 actualUserOpFeePerGas)
+        internal
+        virtual {}
 
     /* @dev Reverts if the caller is not the {entryPoint}. Used by the {onlyEntryPoint} modifier. */
     function _checkEntryPoint() internal view virtual {
