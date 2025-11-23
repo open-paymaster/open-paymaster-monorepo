@@ -79,6 +79,23 @@ sdk/              # TypeScript SDK for client integration
 frontend/         # Reference UI implementation
 ```
 
+### Components
+
+**Universal Paymaster** (on-chain, required)
+- Singleton contract holding all liquidity pools
+- Handles token-to-gas conversion and gas sponsorship
+- Manages LP deposits, withdrawals, and yield distribution
+
+**Paymaster Router** (off-chain, optional)
+- Returns the cheapest pool for a given token
+- Example: "Which pool offers the best rate to pay my transaction in USDC?"
+- Optimizes gas costs by routing to the most efficient liquidity source
+
+**Frontend** (off-chain, optional)
+- Fallback UI for liquidity providers: deposit, withdraw, and rebalance pools
+- Fallback UI for users: perform cross-chain gasless transactions when wallet doesn't support Universal Paymaster yet
+- Example use case: Send funds without gas when your wallet hasn't integrated the paymaster
+
 ## Status
 
 This project is under active development. The core contracts implement:
