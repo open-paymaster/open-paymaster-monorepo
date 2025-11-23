@@ -25,7 +25,7 @@ createAppKit({
     icons: [''],
   },
   networks: [base, arbitrum],
-  defaultNetwork: base,
+  defaultNetwork: arbitrum,
   enableWalletConnect: false,
   features: {
     swaps: false,

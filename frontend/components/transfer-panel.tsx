@@ -39,6 +39,14 @@ const renderIcon = (src: string, alt: string) => (
 
 const assetOptions: AssetOption[] = [
   {
+    value: 'USDC',
+    label: 'USD Coin',
+    ticker: 'USDC',
+    address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+    decimals: 6,
+    icon: renderIcon('/svg/usdc.svg', 'USD Coin'),
+  },
+  {
     value: 'ETH',
     label: 'Ether',
     ticker: 'ETH',
@@ -53,14 +61,6 @@ const assetOptions: AssetOption[] = [
     address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
     decimals: 8,
     icon: renderIcon('/svg/bitcoin.svg', 'Bitcoin'),
-  },
-  {
-    value: 'USDC',
-    label: 'USD Coin',
-    ticker: 'USDC',
-    address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
-    decimals: 6,
-    icon: renderIcon('/svg/usdc.svg', 'USD Coin'),
   },
   {
     value: 'DAI',
@@ -82,16 +82,16 @@ const assetOptions: AssetOption[] = [
 
 const chainOptions: ChainOption[] = [
   {
-    value: 'Base',
-    chainId: base.id,
-    label: 'Base',
-    icon: renderIcon('/svg/base.svg', 'Arbitrum'),
-  },
-  {
     value: 'Arbitrum',
     chainId: arbitrum.id,
     label: 'Arbitrum One',
     icon: renderIcon('/svg/arbitrum.svg', 'Arbitrum'),
+  },
+  {
+    value: 'Base',
+    chainId: base.id,
+    label: 'Base',
+    icon: renderIcon('/svg/base.svg', 'Arbitrum'),
   },
   {
     value: 'Ethereum',
