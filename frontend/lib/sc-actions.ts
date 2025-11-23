@@ -1,4 +1,4 @@
-import { arbitrum } from 'viem/chains';
+import { arbitrum, base } from 'viem/chains';
 import {
   http,
   type Address,
@@ -68,11 +68,11 @@ type TxResult = {
   receipt: TransactionReceipt;
 };
 
-const chain = arbitrum;
+const chain = base;
 const rpcUrl =
-  chain.id === arbitrum.id
-    ? 'https://virtual.arbitrum.eu.rpc.tenderly.co/e6fb815c-cd14-4c18-8353-69ee17162268 '
-    : 'https://virtual.base.eu.rpc.tenderly.co/f346cd0c-38c5-43af-881d-26ef5805c88a';
+  chain.id === base.id
+    ? 'https://virtual.base.eu.rpc.tenderly.co/f346cd0c-38c5-43af-881d-26ef5805c88a'
+    : 'https://virtual.arbitrum.eu.rpc.tenderly.co/e6fb815c-cd14-4c18-8353-69ee17162268 ';
 
 export const publicClient = createPublicClient({
   chain,

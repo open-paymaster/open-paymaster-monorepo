@@ -31,6 +31,9 @@ export function PoolAnalyticsShell({
 
   const { data: logs, isLoading } = useGetPools();
 
+  console.log(logs);
+  console.log(isLoading);
+
   const poolRows = useMemo(() => {
     if (!logs) return [];
     return logs.map(mapPoolLogToRow);
