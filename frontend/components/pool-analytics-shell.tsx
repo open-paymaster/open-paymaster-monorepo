@@ -1,10 +1,11 @@
 'use client';
 
 import { useDeferredValue, useMemo, useState, useTransition } from 'react';
-import { PoolTable } from '@/components/pool-table';
+import { PoolRow, PoolTable } from '@/components/pool-table';
 import { LiquidGlassButton } from '@/components/ui/liquid-glass-button';
 import SlideOver from '@/components/ui/slide-over';
-import { defaultPoolData, type PoolRow } from '@/data/pools';
+import useGetPools from '@/hooks/useGetPools';
+import { mapPoolLogToRow } from '@/lib/utils';
 
 type PoolAction = {
   label: string;
@@ -14,38 +15,50 @@ type PoolAction = {
 };
 
 type PoolAnalyticsShellProps = {
-  data?: PoolRow[];
   actions?: PoolAction[];
   searchQuery?: string;
 };
 
 export function PoolAnalyticsShell({
-  data = defaultPoolData,
   actions = [],
   searchQuery = '',
 }: PoolAnalyticsShellProps) {
-  const [selectedPoolId, setSelectedPoolId] = useState<string | null>(null);
-  const deferredQuery = useDeferredValue(searchQuery);
-  const [, startTransition] = useTransition();
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [selectedPoolId, setSelectedPoolId] = useState<string | null>(null);
 
+  const [, startTransition] = useTransition();
+  const deferredQuery = useDeferredValue(searchQuery);
+
+  const { data: logs, isLoading } = useGetPools();
+
+  console.log(logs);
+  console.log(isLoading);
+
+  const poolRows = useMemo(() => {
+    if (!logs) return [];
+    return logs.map(mapPoolLogToRow);
+  }, [logs]);
   const filteredData = useMemo(() => {
+    if (!poolRows.length) return [];
+
     if (!deferredQuery.trim()) {
-      return data;
+      return poolRows;
     }
+
     const normalized = deferredQuery.trim().toLowerCase();
-    return data.filter((pool) => {
+
+    return poolRows.filter((pool) => {
       const matchPool = pool.pool.toLowerCase().includes(normalized);
       const matchTokens = pool.tokens?.some((token) =>
-        token.toLowerCase().includes(normalized)
+        token.toLowerCase().includes(normalized),
       );
       return matchPool || matchTokens;
     });
-  }, [data, deferredQuery]);
+  }, [deferredQuery, poolRows]);
 
   const selectedPool = useMemo(
     () => filteredData.find((pool) => pool.id === selectedPoolId) ?? null,
-    [filteredData, selectedPoolId]
+    [filteredData, selectedPoolId],
   );
 
   const handleSelectRow = (row: PoolRow) => {

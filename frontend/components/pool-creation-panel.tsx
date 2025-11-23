@@ -34,12 +34,12 @@ function PoolCreationPanel({ className, onClose }: PoolCreationPanelProps) {
       return;
     }
 
-    const lpFeeBps = Number(lpFeeInput);
-    const rebalancingFeeBps = Number(rebalancingFeeInput);
+    const lpFeeBps = BigInt(lpFeeInput);
+    const rebalancingFeeBps = BigInt(rebalancingFeeInput);
 
     if (
-      Number.isNaN(lpFeeBps) ||
-      Number.isNaN(rebalancingFeeBps) ||
+      Number.isNaN(lpFeeBps.toString()) ||
+      Number.isNaN(rebalancingFeeBps.toString()) ||
       lpFeeBps < 0 ||
       rebalancingFeeBps < 0
     ) {

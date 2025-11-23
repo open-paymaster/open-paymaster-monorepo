@@ -169,7 +169,6 @@ function TransferPanel({ className, onClose }: TransferPanelProps) {
         BigInt(params.amount),
         params.recepient as Address,
         callbackFn,
-        env.paymasterAddress as Address,
       );
 
       // Replace with actual transfer action when backend or wallet wiring is ready.

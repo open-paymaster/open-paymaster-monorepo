@@ -15,6 +15,8 @@ import tokensJson from '@/data/tokens.json';
 
 import { chainIds, wagmiConfig } from '@/config/wagmi-config';
 import { arbitrum, base } from 'viem/chains';
+import { env } from '@/config/env';
+import { buildPaymasterData } from './pyth';
 
 export interface CapturedFlagsData {
   flagHolder0: string;
@@ -77,14 +79,13 @@ export async function crossChainTransfer(
   amount: bigint,
   recipient: Address,
   callback: ExecCallback,
-  paymaster?: Address,
 ): Promise<void> {
-  console.log('Cross chain transfer', {amount, recipient, paymaster, callback});
   const { sdk, account } = await createEilSdk();
 
   const chainId0 = BigInt(base.id);
   const chainId1 = BigInt(arbitrum.id);
 
+<<<<<<< HEAD
   // const userOpOverrideInOriginChain = {
   //   paymaster: paymaster === undefined ? "0xc7F3D98ed15c483C0f666d9F3EA0Dc7abEe77ca2" : paymaster, // prettier-ignore
   //   paymasterVerificationGasLimit: BigInt(100_000),
@@ -97,7 +98,25 @@ export async function crossChainTransfer(
     maxPriorityFeePerGas: BigInt(100),
   };
 
+=======
+>>>>>>> d8c928d20413ff24187439c7d8d3fe17488c9826
   const token = sdk.createToken('USDC', tokensJson.USDC);
+  const { paymasterAndData } = await buildPaymasterData(
+    token.addressOn(BigInt(base.id)),
+  );
+
+  const userOpOverrideInOriginChain = {
+    paymaster: env.paymasterAddress as Address,
+    paymasterAndData,
+    paymasterVerificationGasLimit: BigInt(100_000),
+    paymasterPostOpGasLimit: BigInt(100_000),
+    maxFeePerGas: BigInt(100_000_000),
+    maxPriorityFeePerGas: BigInt(100),
+  };
+  const userOpOverrideInDestinyChain = {
+    maxFeePerGas: BigInt(100_000_000),
+    maxPriorityFeePerGas: BigInt(100),
+  };
 
   const executor = await sdk
     .createBuilder()
@@ -108,6 +127,7 @@ export async function crossChainTransfer(
       destinationChainId: chainId1,
       tokens: [{ token, amount }],
     })
+    .overrideUserOp(userOpOverrideInOriginChain)
     .endBatch()
 
     .startBatch(chainId1)

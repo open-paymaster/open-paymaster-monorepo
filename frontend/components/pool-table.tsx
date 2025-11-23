@@ -11,7 +11,19 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { InfoBadge } from '@/components/ui/info-badge';
-import { defaultPoolData, type PoolRow } from '@/data/pools';
+
+export type PoolRow = {
+  id: string;
+  pool: string;
+  tokens?: [string, string];
+  fee: string;
+  tvl: string;
+  apr: string;
+  sevenDayVolume: string;
+  rebalanceFactor: string;
+  chainId: number;
+  tokenAddress: `0x${string}`;
+};
 
 const parseCurrency = (value: string) =>
   Number(value.replace(/[^0-9.]/g, '')) || 0;
@@ -30,6 +42,13 @@ const tokenIcons: Record<string, { src: string; alt: string }> = {
   OP: { src: '/svg/optimism.svg', alt: 'Optimism' },
   ARB: { src: '/svg/arbitrum.svg', alt: 'Arbitrum' },
   LINK: { src: '/svg/chainlink.svg', alt: 'Chainlink' },
+};
+
+const networkIcons: Record<number, { src: string; alt: string }> = {
+  1: { src: '/svg/eth.svg', alt: 'Ethereum Mainnet' },
+  10: { src: '/svg/optimism.svg', alt: 'Optimism' },
+  42161: { src: '/svg/arbitrum.svg', alt: 'Arbitrum One' },
+  8453: { src: '/svg/base.svg', alt: 'Base' },
 };
 
 const tokenBaseStyle = {
@@ -53,7 +72,8 @@ const TokenGlyph = ({ symbol }: { symbol: string }) => {
   return (
     <span
       className="flex h-8 w-8 items-center justify-center rounded-full"
-      style={tokenBaseStyle}>
+      style={tokenBaseStyle}
+    >
       {icon ? (
         <Image
           src={icon.src}
@@ -82,7 +102,44 @@ const TokenPair = ({ tokens }: { tokens: [string, string] }) => (
   </span>
 );
 
+const NetworkGlyph = ({ chainId }: { chainId: number }) => {
+  const icon = networkIcons[chainId];
+
+  if (!icon) {
+    return (
+      <span className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
+        Chain {chainId}
+      </span>
+    );
+  }
+
+  return (
+    <span
+      className="flex h-9 w-9 items-center justify-center rounded-full bg-white"
+      style={tokenBaseStyle}
+    >
+      <Image
+        src={icon.src}
+        alt={icon.alt}
+        width={22}
+        height={22}
+        className="h-6 w-6 object-contain"
+      />
+    </span>
+  );
+};
+
 const columns: ColumnDef<PoolRow>[] = [
+  {
+    header: () => makeHeader('Network'),
+    accessorKey: 'chainId',
+    enableSorting: false,
+    cell: ({ row }) => (
+      <div className="flex justify-center">
+        <NetworkGlyph chainId={row.original.chainId} />
+      </div>
+    ),
+  },
   {
     header: () => makeHeader('Pool'),
     accessorKey: 'pool',
@@ -97,7 +154,7 @@ const columns: ColumnDef<PoolRow>[] = [
       return (
         <div className="flex items-center gap-3">
           <TokenPair tokens={tokens} />
-          <span className="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-slate-500">
+          <span className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
             {pairLabel}
           </span>
         </div>
@@ -111,7 +168,7 @@ const columns: ColumnDef<PoolRow>[] = [
         'Fee',
         <span className="whitespace-nowrap">
           Fee = depositor fee + rebalancing fee
-        </span>
+        </span>,
       ),
     accessorKey: 'fee',
     sortingFn: 'text',
@@ -162,7 +219,7 @@ const columns: ColumnDef<PoolRow>[] = [
     header: () =>
       makeHeader(
         'Balance ƒ',
-        'How balanced is the pool between ETH and the paired token.'
+        'How balanced is the pool between ETH and the paired token.',
       ),
     accessorKey: 'rebalanceFactor',
     enableSorting: false,
@@ -181,7 +238,7 @@ type PoolTableProps = {
 };
 
 export function PoolTable({
-  data = defaultPoolData,
+  data = [],
   caption,
   className,
   selectedPoolId,
@@ -218,12 +275,13 @@ export function PoolTable({
       <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
         <table className="w-full table-fixed border-collapse text-left">
           <colgroup>
-            <col className="w-[28%]" />
-            <col className="w-[14%]" />
-            <col className="w-[14%]" />
-            <col className="w-[14%]" />
-            <col className="w-[14%]" />
-            <col className="w-[16%]" />
+            <col className="w-[10%]" />
+            <col className="w-[21%]" />
+            <col className="w-[12%]" />
+            <col className="w-[12%]" />
+            <col className="w-[10%]" />
+            <col className="w-[12%]" />
+            <col className="w-[15%]" />
           </colgroup>
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -231,15 +289,22 @@ export function PoolTable({
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="px-3 pb-3 text-[0.7rem] font-semibold tracking-[0.18em] text-slate-500 sm:px-4">
+                    className={[
+                      'px-3 pb-3 text-[0.7rem] font-semibold tracking-[0.18em] text-slate-500 sm:px-4',
+                      header.column.id === 'chainId'
+                        ? 'text-center'
+                        : 'text-left',
+                    ].join(' ')}
+                  >
                     {header.isPlaceholder ? null : header.column.getCanSort() ? (
                       <button
                         type="button"
                         onClick={header.column.getToggleSortingHandler()}
-                        className="flex items-center gap-1 text-left">
+                        className="flex items-center gap-1 text-left"
+                      >
                         {flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                         {header.column.getIsSorted() ? (
                           <span className="text-[0.6rem] text-slate-400">
@@ -250,7 +315,7 @@ export function PoolTable({
                     ) : (
                       flexRender(
                         header.column.columnDef.header,
-                        header.getContext()
+                        header.getContext(),
                       )
                     )}
                   </th>
@@ -285,11 +350,18 @@ export function PoolTable({
                 ]
                   .filter(Boolean)
                   .join(' ')}
-                style={{ animationDelay: `${index * 70}ms` }}>
+                style={{ animationDelay: `${index * 70}ms` }}
+              >
                 {row.getVisibleCells().map((cell) => (
                   <td
-                    className="px-3 py-4 text-sm text-slate-600 sm:px-4"
-                    key={cell.id}>
+                    className={[
+                      'px-3 py-4 text-sm text-slate-600 sm:px-4',
+                      cell.column.id === 'chainId' ? 'text-center' : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                    key={cell.id}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}

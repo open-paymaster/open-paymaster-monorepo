@@ -79,7 +79,8 @@ export function StatusDonut({ data, totalValue }: StatusDonutProps) {
   return (
     <div
       ref={containerRef}
-      className="reveal relative flex w-full max-w-[16rem] aspect-square items-center justify-center">
+      className="reveal relative flex w-full max-w-[16rem] aspect-square items-center justify-center"
+    >
       <svg viewBox="-110 -110 220 220" className="h-full w-full text-slate-200">
         <defs>
           {arcData.map((segment, index) => (
@@ -89,7 +90,8 @@ export function StatusDonut({ data, totalValue }: StatusDonutProps) {
               x1="0%"
               y1="0%"
               x2="100%"
-              y2="100%">
+              y2="100%"
+            >
               <stop
                 offset="0%"
                 stopColor={segment.data.color}
@@ -202,7 +204,8 @@ export function StatusDonut({ data, totalValue }: StatusDonutProps) {
             style={{
               left: tooltip.left,
               top: tooltip.top,
-            }}>
+            }}
+          >
             <p className="text-[0.55rem] font-semibold uppercase tracking-[0.35em] text-slate-500">
               {tooltip.label}
             </p>

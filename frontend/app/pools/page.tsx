@@ -1,6 +1,5 @@
 import { PoolSection } from '@/components/pool-section';
 import { StatusCard } from '@/components/status-card';
-import { defaultPoolData } from '@/data/pools';
 
 async function deposit(formData: FormData) {
   'use server';
@@ -45,7 +44,7 @@ export default function PoolPage() {
       </div>
 
       <div className="flex w-full min-h-0 lg:w-1/4">
-        <StatusCard stats={stats} poolData={defaultPoolData} />
+        <StatusCard stats={stats} />
       </div>
     </main>
   );

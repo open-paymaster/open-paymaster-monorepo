@@ -8,14 +8,14 @@ import { LiquidGlassButton } from '@/components/ui/liquid-glass-button';
 import { PoolAnalyticsShell } from '@/components/pool-analytics-shell';
 import { PoolCreationPanel } from '@/components/pool-creation-panel';
 import SlideOver from '@/components/ui/slide-over';
-import type { PoolRow } from '@/data/pools';
+import { PoolRow } from './pool-table';
 
 type PoolSectionProps = {
   actions: Parameters<typeof PoolAnalyticsShell>[0]['actions'];
   data?: PoolRow[];
 };
 
-export function PoolSection({ actions, data }: PoolSectionProps) {
+export function PoolSection({ actions }: PoolSectionProps) {
   const { open } = useAppKit();
   const { isConnected } = useAppKitAccount();
   const [query, setQuery] = useState('');
@@ -60,11 +60,7 @@ export function PoolSection({ actions, data }: PoolSectionProps) {
           </div>
         </div>
         <div className="min-h-0 flex-1 ">
-          <PoolAnalyticsShell
-            actions={actions}
-            data={data}
-            searchQuery={query}
-          />
+          <PoolAnalyticsShell actions={actions} searchQuery={query} />
         </div>
       </section>
 

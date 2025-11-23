@@ -1,10 +1,8 @@
-import { defaultPoolData, type PoolRow } from '@/data/pools';
 import { StatusDonut } from './status-donut';
 import { CountUpValue } from '@/components/count-up-value';
 
 type StatusCardProps = {
   stats: Array<{ label: string; value: string; change: string }>;
-  poolData?: PoolRow[];
 };
 
 const parseTvlValue = (raw: string) => {
@@ -26,17 +24,11 @@ const parseTvlValue = (raw: string) => {
   return amount;
 };
 
-export function StatusCard({ stats, poolData }: StatusCardProps) {
-  const sourcePools =
-    Array.isArray(poolData) && poolData.length > 0 ? poolData : defaultPoolData;
-
-  const sortedPools = [...sourcePools]
-    .map((pool) => ({
-      id: pool.id,
-      label: pool.pool,
-      value: parseTvlValue(pool.tvl),
-    }))
-    .sort((a, b) => b.value - a.value);
+export function StatusCard({ stats }: StatusCardProps) {
+  // @ts-expect-error - ignore
+  const sourcePools = [];
+  // @ts-expect-error - ignore
+  const sortedPools = [...sourcePools];
 
   const topFive = sortedPools.slice(0, 5);
   const remaining = sortedPools.slice(5);
