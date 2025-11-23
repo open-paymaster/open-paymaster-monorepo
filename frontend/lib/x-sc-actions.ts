@@ -1,25 +1,25 @@
 import type { SmartAccount } from 'viem/account-abstraction';
+import { getAccount, getWalletClient } from '@wagmi/core';
 import { AmbireMultiChainSmartAccount } from '@eil-protocol/accounts';
 import { getClient, getBalance, readContract } from 'wagmi/actions';
-import { getAccount, getWalletClient, reconnect } from '@wagmi/core';
 import { erc20Abi, zeroAddress, type Address, type WalletClient } from 'viem';
 import {
   CrossChainSdk,
+  TransferAction,
   MultichainToken,
   AmbireBundlerManager,
-  TransferAction,
   type ExecCallback,
   type IMultiChainSmartAccount,
 } from '@eil-protocol/sdk';
 import tokensJson from '@/data/tokens.json';
 
 import { chainIds, wagmiConfig } from '@/config/wagmi-config';
+import { arbitrum, base } from 'viem/chains';
 
 export interface CapturedFlagsData {
   flagHolder0: string;
   flagHolder1: string;
 }
-
 export interface BalanceData {
   balance0: bigint;
   balance1: bigint;
@@ -35,12 +35,9 @@ export const BALANCE_PLACEHOLDER: BalanceData = {
 };
 
 async function fetchWalletClient(): Promise<WalletClient | undefined> {
-  const account = getAccount(wagmiConfig);
-
   try {
-    const walletClient = await getWalletClient(wagmiConfig, {
-      connector: account.connector,
-    });
+    const account = getAccount(wagmiConfig);
+    const walletClient = await getWalletClient(wagmiConfig, { connector: account.connector }); // prettier-ignore
     return walletClient;
   } catch (error) {
     console.error('Failed to get wallet client:', error);
@@ -77,31 +74,29 @@ export async function createEilSdk(): Promise<{
 }
 
 export async function crossChainTransfer(
-  tokenAddress: Address,
-  tokenLabel: string,
   amount: bigint,
   recipient: Address,
-  paymaster: Address,
   callback: ExecCallback,
+  paymaster?: Address,
 ): Promise<void> {
   const { sdk, account } = await createEilSdk();
 
-  const [chainId0, chainId1] = chainIds;
+  const chainId0 = BigInt(base.id);
+  const chainId1 = BigInt(arbitrum.id);
 
-  
-  const userOpOriginChainOverride = {
-    paymaster: '0xc7F3D98ed15c483C0f666d9F3EA0Dc7abEe77ca2',
+  const userOpOverrideInOriginChain = {
+    paymaster: paymaster === undefined ? "0xc7F3D98ed15c483C0f666d9F3EA0Dc7abEe77ca2" : paymaster, // prettier-ignore
     paymasterVerificationGasLimit: BigInt(100_000),
     paymasterPostOpGasLimit: BigInt(100_000),
-    maxFeePerGas: BigInt(1000000000),
+    maxFeePerGas: BigInt(100_000_000),
     maxPriorityFeePerGas: BigInt(100),
   };
-  const userOpDestinationChainOverride = {
-    maxFeePerGas: BigInt(1000000000),
+  const userOpOverrideInDestinyChain = {
+    maxFeePerGas: BigInt(100_000_000),
     maxPriorityFeePerGas: BigInt(100),
   };
 
-  const token = sdk.createToken('USDC', tokensJson.USDC)
+  const token = sdk.createToken('USDC', tokensJson.USDC);
 
   const executor = await sdk
     .createBuilder()
@@ -112,7 +107,7 @@ export async function crossChainTransfer(
       destinationChainId: chainId1,
       tokens: [{ token, amount }],
     })
-    .overrideUserOp(userOpOriginChainOverride)
+    .overrideUserOp(userOpOverrideInOriginChain)
     .endBatch()
 
     .startBatch(chainId1)
@@ -124,19 +119,18 @@ export async function crossChainTransfer(
         amount,
       }),
     )
-    .overrideUserOp(userOpDestinationChainOverride)
+    .overrideUserOp(userOpOverrideInDestinyChain)
     .endBatch()
 
     .useAccount(account)
     .buildAndSign();
 
-    try {
-      await executor.execute(callback);
-      
-    } catch (error) {
-      console.error('Error executing transfer:', error);
-      throw error;
-    }
+  try {
+    await executor.execute(callback);
+  } catch (error) {
+    console.error('Error executing transfer:', error);
+    throw error;
+  }
 }
 
 /**

@@ -1,8 +1,7 @@
-import { mainnet, sepolia } from 'viem/chains';
+import { base } from 'viem/chains';
 import {
   http,
   custom,
-  type Chain,
   type Address,
   createPublicClient,
   createWalletClient,
@@ -35,24 +34,17 @@ type RebalancePoolParams = {
   receiver: Address;
 };
 
-const resolveChain = (): Chain => {
-  const supportedChains: Chain[] = [mainnet, sepolia];
-  const numericId = Number(env.chainId);
-  return supportedChains.find((chain) => chain.id === numericId) ?? mainnet;
-};
-const resolveRpc = () => {
-  const fallbackUrl = mainnet.rpcUrls.default.http[0];
-  return http(env.rpcUrl ?? fallbackUrl);
-};
-
 export const publicClient = createPublicClient({
-  chain: resolveChain(),
-  transport: resolveRpc(),
+  chain: base,
+  transport: http(
+    'https://virtual.base.eu.rpc.tenderly.co/f346cd0c-38c5-43af-881d-26ef5805c88a',
+  ),
 });
 export const walletClient = createWalletClient({
-  chain: mainnet,
-  // @ts-expect-error - ignore
-  transport: custom(window.ethereum),
+  chain: base,
+  transport: http(
+    'https://virtual.base.eu.rpc.tenderly.co/f346cd0c-38c5-43af-881d-26ef5805c88a',
+  ),
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
