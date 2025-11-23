@@ -1,267 +1,110 @@
-# Universal Paymaster 🪐
+# Universal Paymaster
 
-A full-stack blockchain application for managing liquidity pools that sponsor transactions. Built with Hardhat 3 for smart contract development and Next.js for the frontend interface.
+A decentralized, trustless paymaster built on ERC-4337 that enables gasless blockchain transactions through community-funded liquidity pools.
 
-**Made in Argentina** 🇦🇷
+## The Problem
 
-## Features
+Users face three fundamental barriers when using Ethereum-compatible networks:
 
-- **3D Interactive Globe**: WebGL-based visualization of global activity using Three.js
-- **Pool Management**: Dashboard for monitoring and managing liquidity pools
-- **Smart Contract Integration**: Direct interaction with Universal Paymaster contracts via Viem
-- **Multi-Auth Support**: Privy integration with passkey, wallet, and email login
-- **Real-time Analytics**: Pool metrics including TVL, APR, volume, and rebalancing factors
+1. **The Gas Paradox**: Having tokens but being unable to use them due to lack of native currency for gas
+2. **Acquisition Friction**: Getting gas requires bridging funds or using centralized exchanges with KYC
+3. **Complexity Barrier**: End users shouldn't need to understand gas—it's an implementation detail that should be abstracted away
 
-## Tech Stack
+### Why Centralized Paymasters Don't Solve This
 
-### Smart Contracts
-- **Framework**: Hardhat 3 (Beta)
-- **Solidity**: 0.8.28
-- **Testing**: Foundry-compatible tests + Node.js test runner
-- **Development**: Viem for Ethereum interactions
+- **Trust dependency**: Users rely on third parties to maintain operations and liquidity
+- **Liveness risk**: No guarantee the service will stay operational or funded
+- **High fees**: Typically charge 10%+ markup on gas costs
 
-### Frontend
-- **Framework**: Next.js 16 (App Router)
-- **UI**: React 19, Tailwind CSS 4
-- **3D Graphics**: Three.js, React Three Fiber, Drei
-- **Blockchain**: Viem, Privy Auth
-- **Type Safety**: TypeScript, Zod
+## The Solution
 
-### Monorepo
-- **Package Manager**: pnpm
+**Universal Paymaster** enables users to pay transaction fees with any supported ERC-20 token. Liquidity providers earn yield on native ETH deposits, while users get seamless access without ever touching gas tokens.
 
-## Getting Started
+### How It Works
 
-### Prerequisites
+The paymaster operates through:
 
-- Node.js 20+
-- pnpm
+- **Community-funded liquidity pools**: LPs deposit native ETH and earn yield
+- **Token-to-gas conversion**: Users pay fees in tokens they already hold
+- **ERC-4337 infrastructure**: Leverages account abstraction for flexible transaction sponsorship
+- **Decentralized operation**: No single point of failure or trust dependency
 
-### Installation
+## Integration with EIL
 
-```bash
-# Clone the repository
-git clone <repository-url>
-cd universal-paymaster-monorepo
+Universal Paymaster strongly complements the [Ethereum Interoperability Layer (EIL)](https://github.com/ethereum-optimism/EIL) to achieve a truly unified Ethereum experience:
 
-# Install frontend dependencies
-cd frontend
-pnpm install
+- **Universal Paymaster**: Covers gas on the origin chain
+- **EIL CrossChainPaymaster**: Covers gas on destination chains
+- **Combined result**: Trustless cross-chain interactions without gas token management
 
-# Install contract dependencies
-cd ../contracts
-pnpm install
-```
+Together, these systems eliminate the need to maintain ETH balances across multiple chains or trust centralized intermediaries.
 
-### Environment Setup
+## Example: Alice Pays Bob Cross-Chain
 
-#### Frontend Environment
+Alice has 100 USDC on Ethereum mainnet. She wants to send 50 USDC to Bob on Base.
 
-Create a `.env.local` file in the `frontend` directory:
+**Traditional approach** (broken UX):
+1. Buy ETH with USDC on mainnet
+2. Bridge ETH to Base
+3. Bridge USDC to Base
+4. Send USDC to Bob
+5. Bob needs Base ETH to use the funds
 
-```env
-NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id
-NEXT_PUBLIC_CHAIN_ID=1
-NEXT_PUBLIC_RPC_URL=https://eth-mainnet.g.alchemy.com/v2/your-api-key
-NEXT_PUBLIC_PAYMASTER_ADDRESS=0x...
-```
+**With Universal Paymaster + EIL**:
+1. Alice sends 50 USDC to Bob's Base address
+2. Universal Paymaster takes gas payment in USDC on mainnet
+3. EIL Voucher Request is fulfilled by an XLP on Base
+4. Bob receives 50 USDC on Base, usable immediately
 
-All environment variables are validated at build time using Zod.
+Neither Alice nor Bob needed to understand gas, acquire native tokens, or trust centralized services.
 
-#### Contracts Environment (Optional)
+## Key Properties
 
-For deploying contracts to Sepolia, set configuration variables:
+- **Trustless**: No reliance on centralized operators
+- **Permissionless**: Anyone can become a liquidity provider
+- **Gasless UX**: Users pay fees in tokens they already hold
+- **ERC-4337 native**: Built on the account abstraction standard
+- **Cross-chain ready**: Integrates with EIL for multi-chain operations
 
-```bash
-# Set private key using hardhat-keystore
-cd contracts
-npx hardhat keystore set SEPOLIA_PRIVATE_KEY
-npx hardhat keystore set SEPOLIA_RPC_URL
-```
-
-### Development
-
-#### Frontend Development
-
-```bash
-cd frontend
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) to view the application.
-
-#### Smart Contract Development
-
-```bash
-cd contracts
-
-# Run all tests
-npx hardhat test
-
-# Run Solidity tests only
-npx hardhat test solidity
-
-# Run Node.js tests only
-npx hardhat test nodejs
-
-# Deploy to local network
-npx hardhat ignition deploy ignition/modules/Counter.ts
-
-# Deploy to Sepolia
-npx hardhat ignition deploy --network sepolia ignition/modules/Counter.ts
-```
-
-### Building for Production
-
-```bash
-cd frontend
-pnpm build
-pnpm start
-```
-
-## Project Structure
+## Architecture
 
 ```
-universal-paymaster-monorepo/
-├── contracts/                 # Smart contract development
-│   ├── hardhat.config.ts     # Hardhat 3 configuration
-│   ├── scripts/              # Deployment and utility scripts
-│   │   └── send-op-tx.ts    # Example OP mainnet transaction
-│   ├── ignition/             # Hardhat Ignition deployment modules
-│   └── package.json          # Contract dependencies (Hardhat 3, Viem)
-│
-└── frontend/                  # Next.js application
-    ├── app/                   # Next.js App Router pages
-    │   ├── page.tsx          # Landing page with 3D globe
-    │   ├── pools/            # Pool management routes
-    │   └── providers.tsx     # App-wide providers (Privy)
-    ├── components/           # React components
-    │   ├── ui/              # Reusable UI components
-    │   ├── globe.tsx        # 3D globe visualization
-    │   ├── control-orb.tsx  # Floating navigation control
-    │   └── pool-*.tsx       # Pool-specific components
-    ├── config/              # Configuration
-    │   └── env.ts          # Environment variable validation
-    ├── lib/                # Utilities and integrations
-    │   ├── abi/           # Smart contract ABIs
-    │   └── sc-actions.ts  # Smart contract action functions
-    ├── data/              # Mock/static data
-    └── public/           # Static assets
+contracts/          # Core smart contracts
+├── core/          # BasePaymaster and core logic
+├── periphery/     # Oracle adapters and utilities
+└── interfaces/    # Contract interfaces
+
+integration/       # Deployment and integration scripts
+sdk/              # TypeScript SDK for client integration
+frontend/         # Reference UI implementation
 ```
 
-## Smart Contracts
+## Status
 
-The Universal Paymaster protocol implements a liquidity pool system that sponsors blockchain transactions. The contracts use ERC-6909 multi-token vault standard for efficient pool management.
+This project is under active development. The core contracts implement:
 
-📖 **[Read the full contracts documentation →](contracts/README.md)**
+- ERC-4337 paymaster standard
+- Pyth oracle integration for price feeds
+- Liquidity pool management
+- Token-based gas payment flows
 
-### Quick Overview
+## Related Standards
 
-The system allows liquidity providers to:
-- Deposit ETH into token-specific pools
-- Earn fees from transaction sponsorship and rebalancing
-- Withdraw funds plus accumulated fees
+- [ERC-4337](./docs/ERC-4337.md): Account Abstraction standard
+- [ERC-7562](./docs/ERC-7562.md): Validation scope rules for AA
+- [EIL Documentation](./docs/EIL.md): Ethereum Interoperability Layer overview
+- [EIL Research](./docs/EIL_research.md): Deep dive into cross-L2 interoperability
 
-Key features:
-- **Multi-token support** via ERC-6909 standard
-- **Fee-based incentives** for LPs and rebalancers
-- **Oracle-based pricing** for accurate token valuations
-- **Pool rebalancing** with discounted rates
+## Vision
 
-### Development with Hardhat 3
+Ethereum should feel like a single, unified chain. Users shouldn't need to understand:
+- Which chain they're using
+- How gas works
+- How to acquire native tokens
+- How to bridge assets
 
-This project uses Hardhat 3 (Beta) with the following features:
+Universal Paymaster is a step toward making blockchain interactions as simple as using any other internet application—while preserving trustlessness and decentralization.
 
-- **Native TypeScript support** with ESM modules
-- **Viem integration** for all Ethereum interactions
-- **Foundry-compatible tests** for Solidity unit testing
-- **Node.js test runner** (`node:test`) for integration tests
-- **Network simulation** for both L1 and OP chains
+---
 
-### Supported Networks
-
-- **hardhatMainnet**: Simulated L1 chain for testing
-- **hardhatOp**: Simulated OP chain for L2 development
-- **sepolia**: Ethereum Sepolia testnet
-
-### Contract Integration
-
-The frontend interacts with Universal Paymaster contracts through [lib/sc-actions.ts](frontend/lib/sc-actions.ts):
-
-- **`createPool()`**: Initialize a new liquidity pool
-- **`supplyToPool()`**: Deposit ETH into a pool
-- **`withdrawFromPool()`**: Withdraw assets from a pool
-- **`rebalancePool()`**: Rebalance pool liquidity
-
-Pool IDs are derived from token addresses using `poolIdFromToken(token: Address)`.
-
-Contract ABIs are defined in [frontend/lib/abi/](frontend/lib/abi/).
-
-For detailed documentation including architecture diagrams, function specifications, and integration examples, see the [contracts README](contracts/README.md).
-
-## Key Components
-
-### 3D Globe ([components/globe.tsx](frontend/components/globe.tsx))
-- Renders ~450,000 points using WebGL
-- Loads GeoJSON data for continent visualization
-- Auto-rotates with smooth animations
-
-### Control Orb ([components/control-orb.tsx](frontend/components/control-orb.tsx))
-- Floating navigation UI
-- Provides quick access to transfers and authentication
-- Appears on all pages except landing
-
-### Pool Dashboard ([app/pools/page.tsx](frontend/app/pools/page.tsx))
-- Interactive pool table with sorting
-- Real-time metrics and analytics
-- Deposit/withdrawal actions
-
-## Development
-
-### Code Quality
-
-```bash
-pnpm lint
-```
-
-### Path Aliases
-
-The project uses `@/*` path aliases:
-
-```typescript
-import { env } from '@/config/env'
-import { createPool } from '@/lib/sc-actions'
-import { Button } from '@/components/ui/button'
-```
-
-## Deployment
-
-This Next.js app can be deployed to:
-
-- **Vercel**: Push to GitHub and connect your repo
-- **Self-hosted**: Use `pnpm build && pnpm start`
-- **Docker**: Create a Dockerfile with Node.js runtime
-
-Ensure all environment variables are set in your deployment platform.
-
-## Contributing
-
-This project was built during a hackathon. Contributions are welcome!
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## License
-
-[Add your license here]
-
-## Acknowledgments
-
-- Smart contracts built with [Hardhat 3](https://hardhat.org/)
-- Frontend built with [Next.js](https://nextjs.org/)
-- Authentication by [Privy](https://privy.io/)
-- 3D graphics powered by [Three.js](https://threejs.org/)
-- Blockchain interactions via [Viem](https://viem.sh/)
+Built with the [Trustless Manifesto](https://github.com/ethereum-optimism/EIL) principles: self-custody, censorship resistance, disintermediation, and verifiable on-chain execution.
