@@ -85,21 +85,6 @@ export async function crossChainTransfer(
   const chainId0 = BigInt(base.id);
   const chainId1 = BigInt(arbitrum.id);
 
-<<<<<<< HEAD
-  // const userOpOverrideInOriginChain = {
-  //   paymaster: paymaster === undefined ? "0xc7F3D98ed15c483C0f666d9F3EA0Dc7abEe77ca2" : paymaster, // prettier-ignore
-  //   paymasterVerificationGasLimit: BigInt(100_000),
-  //   paymasterPostOpGasLimit: BigInt(100_000),
-  //   maxFeePerGas: BigInt(100_000_000),
-  //   maxPriorityFeePerGas: BigInt(100),
-  // };
-  const userOpOverrideInDestinyChain = {
-    maxFeePerGas: BigInt(100_000_000),
-    maxPriorityFeePerGas: BigInt(100),
-  };
-
-=======
->>>>>>> d8c928d20413ff24187439c7d8d3fe17488c9826
   const token = sdk.createToken('USDC', tokensJson.USDC);
   const { paymasterAndData } = await buildPaymasterData(
     token.addressOn(BigInt(base.id)),
@@ -107,14 +92,14 @@ export async function crossChainTransfer(
 
   const userOpOverrideInOriginChain = {
     paymaster: env.paymasterAddress as Address,
-    paymasterAndData,
+    // paymasterAndData,
     paymasterVerificationGasLimit: BigInt(100_000),
     paymasterPostOpGasLimit: BigInt(100_000),
-    maxFeePerGas: BigInt(100_000_000),
+    maxFeePerGas: BigInt(100_000),
     maxPriorityFeePerGas: BigInt(100),
   };
   const userOpOverrideInDestinyChain = {
-    maxFeePerGas: BigInt(100_000_000),
+    maxFeePerGas: BigInt(100_000),
     maxPriorityFeePerGas: BigInt(100),
   };
 
