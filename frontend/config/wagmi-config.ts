@@ -2,8 +2,9 @@ import { arbitrum, base } from 'viem/chains';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 
 import { cookieStorage, createStorage } from 'wagmi';
+import { env } from './env';
 
-export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
+export const projectId = env.projectId;
 
 if (!projectId) {
   throw new Error('Reown project ID is not defined');

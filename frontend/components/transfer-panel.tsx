@@ -10,6 +10,7 @@ import { crossChainTransfer } from '@/lib/x-sc-actions';
 import { Dropdown, type DropdownOption } from '@/components/ui/dropdown';
 import { arbitrum, base, mainnet, optimism } from 'viem/chains';
 import { ExecCallback } from '@eil-protocol/sdk';
+import { env } from '@/config/env';
 
 type TransferPanelProps = {
   onClose?: () => void;
@@ -124,13 +125,13 @@ function TransferPanel({ className, onClose }: TransferPanelProps) {
     const destinationChainInput = formData.get('destinationChain')?.toString() ?? destinationChain; // prettier-ignore
 
     const selectedAsset = assetOptions.find(
-      (option) => option.value === assetInput
+      (option) => option.value === assetInput,
     );
     const selectedOriginChain = chainOptions.find(
-      (option) => option.value === originChainInput
+      (option) => option.value === originChainInput,
     );
     const selectedDestinationChain = chainOptions.find(
-      (option) => option.value === destinationChainInput
+      (option) => option.value === destinationChainInput,
     );
 
     if (
@@ -155,24 +156,20 @@ function TransferPanel({ className, onClose }: TransferPanelProps) {
         chainId1: selectedDestinationChain.chainId,
         tokenAddress: selectedAsset.address,
         tokenTicker: selectedAsset.ticker,
-        paymaster: process.env.NEXT_PUBLIC_PAYMASTER_ADDRESS,
+        paymaster: env.paymasterAddress,
         amount: amountInput,
         recepient: addressInput,
       };
 
-      console.log(params)
-
-      const callbackFn: ExecCallback = ({revertReason, type, index, }) => {
-        console.log('Callback data:', {revertReason, type, index, });
+      const callbackFn: ExecCallback = ({ revertReason, type, index }) => {
+        console.log('Callback data:', { revertReason, type, index });
       };
 
       await crossChainTransfer(
-        params.tokenAddress as Address,
-        params.tokenTicker,
         BigInt(params.amount),
         params.recepient as Address,
-        params.paymaster as Address,
-        callbackFn
+        callbackFn,
+        env.paymasterAddress as Address,
       );
 
       // Replace with actual transfer action when backend or wallet wiring is ready.
@@ -203,9 +200,6 @@ function TransferPanel({ className, onClose }: TransferPanelProps) {
                   Select origin chain & asset to send
                 </p>
               </div>
-              <span className="rounded-full bg-white/60 px-3 py-1 text-[11px] font-semibold text-slate-600 shadow-inner shadow-white/50">
-                Live balance: --
-              </span>
             </div>
 
             {/* origin chain dropdown */}
