@@ -44,6 +44,13 @@ const tokenIcons: Record<string, { src: string; alt: string }> = {
   LINK: { src: '/svg/chainlink.svg', alt: 'Chainlink' },
 };
 
+const networkIcons: Record<number, { src: string; alt: string }> = {
+  1: { src: '/svg/eth.svg', alt: 'Ethereum Mainnet' },
+  10: { src: '/svg/optimism.svg', alt: 'Optimism' },
+  42161: { src: '/svg/arbitrum.svg', alt: 'Arbitrum One' },
+  8453: { src: '/svg/base.svg', alt: 'Base' },
+};
+
 const tokenBaseStyle = {
   boxShadow: '0 10px 20px rgba(125, 139, 178, 0.35)',
 };
@@ -95,7 +102,44 @@ const TokenPair = ({ tokens }: { tokens: [string, string] }) => (
   </span>
 );
 
+const NetworkGlyph = ({ chainId }: { chainId: number }) => {
+  const icon = networkIcons[chainId];
+
+  if (!icon) {
+    return (
+      <span className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
+        Chain {chainId}
+      </span>
+    );
+  }
+
+  return (
+    <span
+      className="flex h-9 w-9 items-center justify-center rounded-full bg-white"
+      style={tokenBaseStyle}
+    >
+      <Image
+        src={icon.src}
+        alt={icon.alt}
+        width={22}
+        height={22}
+        className="h-6 w-6 object-contain"
+      />
+    </span>
+  );
+};
+
 const columns: ColumnDef<PoolRow>[] = [
+  {
+    header: () => makeHeader('Network'),
+    accessorKey: 'chainId',
+    enableSorting: false,
+    cell: ({ row }) => (
+      <div className="flex justify-center">
+        <NetworkGlyph chainId={row.original.chainId} />
+      </div>
+    ),
+  },
   {
     header: () => makeHeader('Pool'),
     accessorKey: 'pool',
@@ -110,7 +154,7 @@ const columns: ColumnDef<PoolRow>[] = [
       return (
         <div className="flex items-center gap-3">
           <TokenPair tokens={tokens} />
-          <span className="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-slate-500">
+          <span className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
             {pairLabel}
           </span>
         </div>
@@ -231,12 +275,13 @@ export function PoolTable({
       <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
         <table className="w-full table-fixed border-collapse text-left">
           <colgroup>
-            <col className="w-[28%]" />
-            <col className="w-[14%]" />
-            <col className="w-[14%]" />
-            <col className="w-[14%]" />
-            <col className="w-[14%]" />
-            <col className="w-[16%]" />
+            <col className="w-[10%]" />
+            <col className="w-[21%]" />
+            <col className="w-[12%]" />
+            <col className="w-[12%]" />
+            <col className="w-[10%]" />
+            <col className="w-[12%]" />
+            <col className="w-[15%]" />
           </colgroup>
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -244,7 +289,12 @@ export function PoolTable({
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="px-3 pb-3 text-[0.7rem] font-semibold tracking-[0.18em] text-slate-500 sm:px-4"
+                    className={[
+                      'px-3 pb-3 text-[0.7rem] font-semibold tracking-[0.18em] text-slate-500 sm:px-4',
+                      header.column.id === 'chainId'
+                        ? 'text-center'
+                        : 'text-left',
+                    ].join(' ')}
                   >
                     {header.isPlaceholder ? null : header.column.getCanSort() ? (
                       <button
@@ -304,7 +354,12 @@ export function PoolTable({
               >
                 {row.getVisibleCells().map((cell) => (
                   <td
-                    className="px-3 py-4 text-sm text-slate-600 sm:px-4"
+                    className={[
+                      'px-3 py-4 text-sm text-slate-600 sm:px-4',
+                      cell.column.id === 'chainId' ? 'text-center' : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
                     key={cell.id}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
